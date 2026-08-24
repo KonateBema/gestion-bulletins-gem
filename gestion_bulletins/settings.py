@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://localhost:8000",
-    "https://gestion-bulletins-v1-1.onrender.com",
+    "https://gestion-bulletins-gem-1.onrender.com",
 ]
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -36,7 +36,7 @@ import os
 
 ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS",
-    "localhost,127.0.0.1,gestion-bulletins-v1-1.onrender.com"
+     "localhost,127.0.0.1,gestion-bulletins-gem-1.onrender.com"
 ).split(",")
 
 

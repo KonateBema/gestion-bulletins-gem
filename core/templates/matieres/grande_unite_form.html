@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+
+                        {% if grande_unite %}
+
+                            ✏️ Modifier la grande unité
+
+                        {% else %}
+
+                            ➕ Nouvelle grande unité
+
+                        {% endif %}
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+
+                        <div class="row g-3">
+
+
+                            <!-- CODE -->
+
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-semibold">
+
+                                    Code
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="code"
+                                    class="form-control"
+                                    required
+                                    value="{{ grande_unite.code|default:'' }}"
+                                    placeholder="Ex: GU01"
+                                >
+
+                            </div>
+
+
+                            <!-- ORDRE -->
+
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-semibold">
+
+                                    Ordre
+
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="ordre"
+                                    class="form-control"
+                                    min="1"
+                                    required
+                                    value="{{ grande_unite.ordre|default:'1' }}"
+                                >
+
+                                <small class="text-muted">
+
+                                    Détermine l'ordre d'affichage.
+
+                                </small>
+
+                            </div>
+
+
+                            <!-- FILIERE -->
+
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-semibold">
+
+                                    Filière BTS
+
+                                </label>
+
+                                <select
+                                    name="filiere_bts"
+                                    class="form-select"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Sélectionner
+                                    </option>
+
+                                    {% for f in filiere_list %}
+
+                                        <option
+                                            value="{{ f.id }}"
+                                            {% if grande_unite.filiere_bts_id == f.id %}
+                                                selected
+                                            {% endif %}
+                                        >
+
+                                            {{ f.nom }}
+
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- LIBELLE -->
+
+                            <div class="col-12">
+
+                                <label class="form-label fw-semibold">
+
+                                    Libellé
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="libelle"
+                                    class="form-control"
+                                    required
+                                    value="{{ grande_unite.libelle|default:'' }}"
+                                    placeholder="Ex: Unités fondamentales"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a
+                                href="{% url 'grande_unite_list' %}"
+                                class="btn btn-outline-secondary"
+                            >
+
+                                <i class="bi bi-arrow-left"></i>
+
+                                Retour
+
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+
+                                <i class="bi bi-check-circle"></i>
+
+                                Enregistrer
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

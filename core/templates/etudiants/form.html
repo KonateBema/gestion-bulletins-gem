@@ -1,0 +1,609 @@
+{% extends 'base.html' %}
+
+{% block title %}
+GEM | Ajouter un étudiant
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       PAGE
+    ===================================================== */
+
+    .student-page {
+        min-height: 100vh;
+        background: #f5f7fb;
+        padding: 40px 0 60px;
+    }
+
+    /* =====================================================
+       CARD PRINCIPALE
+    ===================================================== */
+
+    .student-card {
+        background: #ffffff;
+        border: none;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, .09);
+    }
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .student-header {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+            135deg,
+            #071d35 0%,
+            #0b355d 55%,
+            #c89b3c 140%
+        );
+        color: white;
+        padding: 32px;
+    }
+
+    .student-header::before {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.05);
+        right: -80px;
+        top: -100px;
+    }
+
+    .student-header::after {
+        content: "";
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(200,155,60,.12);
+        right: 100px;
+        bottom: -90px;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .institution-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 30px;
+        padding: 7px 13px;
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+
+    .student-header h3 {
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .student-header p {
+        margin: 0;
+        font-size: 14px;
+        opacity: .85;
+    }
+
+    .header-icon {
+        position: absolute;
+        right: 35px;
+        bottom: 25px;
+        z-index: 2;
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.15);
+    }
+
+    /* =====================================================
+       BODY
+    ===================================================== */
+
+    .student-body {
+        padding: 35px;
+    }
+
+    /* =====================================================
+       SECTION
+    ===================================================== */
+
+    .form-section {
+        margin-bottom: 30px;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .section-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #edf4fb;
+        color: #0b355d;
+    }
+
+    .section-title h5 {
+        margin: 0;
+        font-weight: 750;
+        color: #1f2937;
+    }
+
+    .section-title small {
+        display: block;
+        color: #8a94a6;
+        margin-top: 2px;
+    }
+
+    /* =====================================================
+       LABELS
+    ===================================================== */
+
+    .form-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .required-mark {
+        color: #dc3545;
+    }
+
+    /* =====================================================
+       INPUTS
+    ===================================================== */
+
+    .input-modern input,
+    .input-modern select,
+    .input-modern textarea {
+        width: 100%;
+        min-height: 48px;
+        padding: 11px 14px;
+        border: 1px solid #dfe4ea;
+        border-radius: 11px;
+        background: #fff;
+        color: #1f2937;
+        font-size: 14px;
+        transition: all .2s ease;
+    }
+
+    .input-modern textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .input-modern input:hover,
+    .input-modern select:hover,
+    .input-modern textarea:hover {
+        border-color: #b9c2ce;
+    }
+
+    .input-modern input:focus,
+    .input-modern select:focus,
+    .input-modern textarea:focus {
+        border-color: #0b5ed7;
+        box-shadow: 0 0 0 4px rgba(13,110,253,.10);
+        outline: none;
+    }
+
+    /* =====================================================
+       HELP TEXT
+    ===================================================== */
+
+    .field-help {
+        display: block;
+        margin-top: 6px;
+        color: #8a94a6;
+        font-size: 11px;
+    }
+
+    /* =====================================================
+       ERREURS
+    ===================================================== */
+
+    .field-error {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 7px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        background: #fff1f2;
+        color: #dc3545;
+        font-size: 12px;
+    }
+
+    .input-error input,
+    .input-error select,
+    .input-error textarea {
+        border-color: #dc3545;
+        background: #fffafa;
+    }
+
+    /* =====================================================
+       INFO
+    ===================================================== */
+
+    .form-information {
+        display: flex;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: #f4f8fc;
+        border: 1px solid #e4edf6;
+        color: #536273;
+        font-size: 12px;
+        margin-bottom: 25px;
+    }
+
+    .form-information i {
+        color: #0b5ed7;
+        font-size: 17px;
+    }
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+
+    .btn-save {
+        min-height: 50px;
+        border: none;
+        border-radius: 11px;
+        background: linear-gradient(
+            135deg,
+            #0b355d,
+            #0d6efd
+        );
+        color: white;
+        font-weight: 700;
+        transition: all .25s ease;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13,110,253,.20);
+        color: white;
+    }
+
+    .btn-cancel {
+        min-height: 48px;
+        border-radius: 11px;
+        font-weight: 600;
+    }
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    .form-footer {
+        padding-top: 25px;
+        margin-top: 30px;
+        border-top: 1px solid #edf0f4;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 768px) {
+
+        .student-page {
+            padding: 20px 0 40px;
+        }
+
+        .student-header {
+            padding: 25px 20px;
+        }
+
+        .student-header h3 {
+            font-size: 21px;
+        }
+
+        .header-icon {
+            display: none;
+        }
+
+        .student-body {
+            padding: 25px 20px;
+        }
+
+    }
+
+</style>
+
+
+<div class="student-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-8 col-lg-9">
+
+
+                <!-- =================================================
+                     CARD
+                ================================================== -->
+
+                <div class="student-card">
+
+
+                    <!-- =================================================
+                         HEADER
+                    ================================================== -->
+
+                    <div class="student-header">
+
+                        <div class="header-content">
+
+                            <div class="institution-badge">
+
+                                <i class="bi bi-building"></i>
+
+                                GEM — Gestion Académique
+
+                            </div>
+
+                            <h3>
+
+                                <i class="bi bi-person-plus-fill me-2"></i>
+
+                                Ajouter un étudiant
+
+                            </h3>
+
+                            <p>
+
+                                Enregistrez un nouvel étudiant dans la
+                                plateforme académique GEM.
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="header-icon">
+
+                            <i class="bi bi-mortarboard-fill"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         BODY
+                    ================================================== -->
+
+                    <div class="student-body">
+
+                        <div class="form-information">
+
+                            <i class="bi bi-info-circle-fill"></i>
+
+                            <div>
+
+                                <strong>Informations importantes</strong><br>
+
+                                Veuillez renseigner correctement les informations
+                                de l'étudiant. Les champs obligatoires doivent être
+                                complétés avant l'enregistrement.
+
+                            </div>
+
+                        </div>
+
+
+                        <form method="POST">
+
+                            {% csrf_token %}
+
+
+                            <!-- =================================================
+                                 INFORMATIONS ETUDIANT
+                            ================================================== -->
+
+                            <div class="form-section">
+
+                                <div class="section-title">
+
+                                    <div class="section-icon">
+
+                                        <i class="bi bi-person-vcard-fill"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <h5>
+                                            Informations de l'étudiant
+                                        </h5>
+
+                                        <small>
+                                            Identité et informations personnelles
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+
+                                    {% for field in form %}
+
+                                        <div class="col-md-6 mb-4">
+
+                                            <label
+                                                for="{{ field.id_for_label }}"
+                                                class="form-label">
+
+                                                {{ field.label }}
+
+                                                {% if field.field.required %}
+
+                                                    <span class="required-mark">
+                                                        *
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </label>
+
+
+                                            <div class="input-modern
+                                                {% if field.errors %}
+                                                    input-error
+                                                {% endif %}">
+
+                                                {{ field }}
+
+                                            </div>
+
+
+                                            {% if field.help_text %}
+
+                                                <small class="field-help">
+
+                                                    {{ field.help_text }}
+
+                                                </small>
+
+                                            {% endif %}
+
+
+                                            {% if field.errors %}
+
+                                                {% for error in field.errors %}
+
+                                                    <div class="field-error">
+
+                                                        <i class="bi bi-exclamation-circle-fill"></i>
+
+                                                        {{ error }}
+
+                                                    </div>
+
+                                                {% endfor %}
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 ACTIONS
+                            ================================================== -->
+
+                            <div class="form-footer">
+
+                                <div class="row g-3">
+
+
+                                    <div class="col-md-8">
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-save w-100">
+
+                                            <i class="bi bi-check-circle-fill me-2"></i>
+
+                                            Enregistrer l'étudiant
+
+                                        </button>
+
+                                    </div>
+
+
+                                    <div class="col-md-4">
+
+                                        <a
+                                            href="{% url 'etudiant_list' %}"
+                                            class="btn btn-outline-secondary btn-cancel w-100 d-flex align-items-center justify-content-center">
+
+                                            <i class="bi bi-arrow-left me-2"></i>
+
+                                            Retour à la liste
+
+                                        </a>
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     FOOTER PAGE
+                ================================================== -->
+
+                <div class="text-center mt-3">
+
+                    <small class="text-muted">
+
+                        <i class="bi bi-shield-check me-1"></i>
+
+                        Les informations enregistrées sont protégées
+                        par le système de gestion GEM.
+
+                    </small>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

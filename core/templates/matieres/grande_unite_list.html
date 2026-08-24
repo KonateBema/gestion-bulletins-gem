@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h3 class="fw-bold mb-1">
+
+                🗂️ Gestion des grandes unités
+
+            </h3>
+
+            <p class="text-muted mb-0">
+
+                Organisation des grandes unités par filière BTS
+
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'grande_unite_add' %}"
+            class="btn btn-primary"
+        >
+
+            <i class="bi bi-plus-circle"></i>
+
+            Nouvelle grande unité
+
+        </a>
+
+    </div>
+
+
+    <!-- STATISTIQUE -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="me-3">
+
+                            <i
+                                class="bi bi-collection"
+                                style="font-size: 35px;"
+                            ></i>
+
+                        </div>
+
+                        <div>
+
+                            <small class="text-muted">
+
+                                Grandes unités
+
+                            </small>
+
+                            <h2 class="fw-bold mb-0">
+
+                                {{ total_grandes_unites }}
+
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTRES -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form
+                method="GET"
+                class="row g-3"
+            >
+
+                <div class="col-md-5">
+
+                    <input
+                        type="text"
+                        name="q"
+                        class="form-control"
+                        placeholder="🔎 Rechercher..."
+                        value="{{ request.GET.q }}"
+                    >
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <select
+                        name="filiere_bts"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Toutes les filières
+                        </option>
+
+                        {% for f in filiere_list %}
+
+                            <option
+                                value="{{ f.id }}"
+                                {% if filiere_selectionnee|stringformat:"s" == f.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ f.nom }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark w-100"
+                    >
+
+                        <i class="bi bi-search"></i>
+
+                        Rechercher
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-collection"></i>
+
+                Liste des grandes unités
+
+            </h5>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th width="80">
+                            Ordre
+                        </th>
+
+                        <th>
+                            Code
+                        </th>
+
+                        <th>
+                            Grande unité
+                        </th>
+
+                        <th>
+                            Filière
+                        </th>
+
+                        <th>
+                            Matières
+                        </th>
+
+                        <th width="150">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for gu in grandes_unites %}
+
+                    <tr>
+
+                        <td>
+
+                            <span class="badge bg-dark">
+
+                                {{ gu.ordre }}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="badge bg-secondary">
+
+                                {{ gu.code }}
+
+                            </span>
+
+                        </td>
+
+
+                        <td class="fw-semibold">
+
+                            {{ gu.libelle }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ gu.filiere_bts.nom }}
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="badge bg-info">
+
+                                {{ gu.matieres.count }}
+
+                            </span>
+
+                            matière(s)
+
+                        </td>
+
+
+                        <td>
+
+                            <a
+                                href="{% url 'grande_unite_edit' gu.id %}"
+                                class="btn btn-warning btn-sm"
+                                title="Modifier"
+                            >
+
+                                <i class="bi bi-pencil"></i>
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'grande_unite_delete' gu.id %}"
+                                class="btn btn-danger btn-sm"
+                                title="Supprimer"
+                            >
+
+                                <i class="bi bi-trash"></i>
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center py-5"
+                        >
+
+                            <i
+                                class="bi bi-inbox"
+                                style="font-size: 40px;"
+                            ></i>
+
+                            <p class="text-muted mt-2 mb-0">
+
+                                Aucune grande unité trouvée.
+
+                            </p>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

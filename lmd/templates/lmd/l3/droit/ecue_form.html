@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-success text-white">
+
+            <h4>
+                <i class="bi bi-book"></i>
+
+                {% if form.instance.pk %}
+                    Modifier ECUE
+                {% else %}
+                    Ajouter ECUE
+                {% endif %}
+
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+                {% endif %}
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Code ECUE
+                    </label>
+
+                    {{ form.code }}
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Libellé
+                    </label>
+
+                    {{ form.libelle }}
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Coefficient
+                    </label>
+
+                    {{ form.coefficient }}
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Crédit
+                    </label>
+
+                    {{ form.credit }}
+
+                </div>
+
+
+
+
+                <button class="btn btn-success">
+
+                    <i class="bi bi-save"></i>
+
+                    {% if form.instance.pk %}
+                        Modifier
+                    {% else %}
+                        Enregistrer
+                    {% endif %}
+
+                </button>
+
+
+
+                <a href="{% url 'l3_droit_ecue' ue.id %}"
+                   class="btn btn-secondary">
+
+                    Retour
+
+                </a>
+
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

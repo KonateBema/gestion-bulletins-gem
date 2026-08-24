@@ -1,0 +1,983 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Administrateur{% endblock %}
+
+{% block content %}
+
+<style>
+
+    /* =========================
+       DASHBOARD GLOBAL
+    ========================= */
+
+    .dashboard-container {
+        padding-bottom: 40px;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .dashboard-header {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+            135deg,
+            #0d6efd 0%,
+            #6610f2 100%
+        );
+        color: white;
+        padding: 35px;
+        border-radius: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(13, 110, 253, .20);
+    }
+
+    .dashboard-header::before {
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background: rgba(255,255,255,.08);
+        border-radius: 50%;
+        right: -80px;
+        top: -100px;
+    }
+
+    .dashboard-header::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        background: rgba(255,255,255,.06);
+        border-radius: 50%;
+        right: 150px;
+        bottom: -100px;
+    }
+
+    .dashboard-header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .dashboard-header h2 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .dashboard-header p {
+        margin-bottom: 0;
+        opacity: .9;
+        font-size: 15px;
+    }
+
+    .admin-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.20);
+        padding: 8px 14px;
+        border-radius: 30px;
+        font-size: 13px;
+        margin-bottom: 15px;
+        backdrop-filter: blur(5px);
+    }
+
+    /* =========================
+       STATISTIQUES
+    ========================= */
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.07);
+        transition: all .3s ease;
+        height: 100%;
+        border: 1px solid #f1f3f5;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 18px 35px rgba(0,0,0,.12);
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        right: -35px;
+        bottom: -35px;
+        background: rgba(13,110,253,.04);
+    }
+
+    .icon-box {
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 27px;
+        margin-bottom: 18px;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .stat-number {
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .stat-description {
+        font-size: 12px;
+        color: #8a94a6;
+        margin-top: 6px;
+    }
+
+    /* =========================
+       SECTION
+    ========================= */
+
+    .section-card {
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.07);
+        border: 1px solid #f1f3f5;
+        height: 100%;
+    }
+
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+    }
+
+    .section-title h4 {
+        margin: 0;
+        font-weight: 750;
+        color: #212529;
+    }
+
+    .section-title i {
+        margin-right: 8px;
+    }
+
+    /* =========================
+       ACTIONS RAPIDES
+    ========================= */
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        font-weight: 600;
+        text-align: left;
+        transition: all .25s ease;
+    }
+
+    .action-btn:hover {
+        transform: translateX(5px);
+    }
+
+    .action-btn i {
+        font-size: 20px;
+    }
+
+    /* =========================
+       SYSTEME
+    ========================= */
+
+    .system-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px;
+        border-radius: 14px;
+        background: #f8fafc;
+        margin-bottom: 10px;
+        transition: .2s;
+    }
+
+    .system-item:hover {
+        background: #f1f5f9;
+    }
+
+    .system-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .status-online {
+        background: #d1e7dd;
+        color: #146c43;
+    }
+
+    .status-active {
+        background: #cff4fc;
+        color: #087990;
+    }
+
+    /* =========================
+       ACTIVITES
+    ========================= */
+
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid #f1f3f5;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .activity-time {
+        color: #8a94a6;
+        font-size: 12px;
+    }
+
+    /* =========================
+       RESUME
+    ========================= */
+
+    .summary-box {
+        padding: 18px;
+        border-radius: 15px;
+        background: #f8fafc;
+        text-align: center;
+        height: 100%;
+    }
+
+    .summary-box i {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+
+    .summary-number {
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    .summary-label {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 768px) {
+
+        .dashboard-header {
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 22px;
+        }
+
+        .stat-number {
+            font-size: 29px;
+        }
+
+        .section-card {
+            padding: 20px;
+        }
+    }
+
+</style>
+
+
+<div class="container-fluid dashboard-container">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="dashboard-header">
+
+        <div class="dashboard-header-content">
+
+            <div class="admin-badge">
+                <i class="bi bi-shield-lock-fill"></i>
+                Espace Administration
+            </div>
+
+            <h2>
+                <i class="bi bi-speedometer2"></i>
+                Dashboard Administrateur
+            </h2>
+
+            <p>
+                Bienvenue sur votre espace de gestion académique BTS.
+                Gérez les étudiants, les classes, les professeurs et les notes
+                depuis cette interface.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTIQUES PRINCIPALES
+    ====================================================== -->
+
+    <div class="row g-4">
+
+        <!-- ETUDIANTS -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="icon-box bg-primary text-white">
+
+                    <i class="bi bi-people-fill"></i>
+
+                </div>
+
+                <div class="stat-label">
+                    Étudiants BTS
+                </div>
+
+                <div class="stat-number text-primary">
+
+                    {{ etudiants|default:"0" }}
+
+                </div>
+
+                <div class="stat-description">
+
+                    Étudiants enregistrés
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FILIERES -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="icon-box bg-success text-white">
+
+                    <i class="bi bi-mortarboard-fill"></i>
+
+                </div>
+
+                <div class="stat-label">
+                    Filières
+                </div>
+
+                <div class="stat-number text-success">
+
+                    {{ filieres|default:"0" }}
+
+                </div>
+
+                <div class="stat-description">
+
+                    Filières académiques
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROFESSEURS -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="icon-box bg-warning text-white">
+
+                    <i class="bi bi-person-workspace"></i>
+
+                </div>
+
+                <div class="stat-label">
+                    Professeurs
+                </div>
+
+                <div class="stat-number text-warning">
+
+                    {{ professeurs|default:"0" }}
+
+                </div>
+
+                <div class="stat-description">
+
+                    Enseignants actifs
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CLASSES -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="icon-box bg-danger text-white">
+
+                    <i class="bi bi-building-fill"></i>
+
+                </div>
+
+                <div class="stat-label">
+                    Classes
+                </div>
+
+                <div class="stat-number text-danger">
+
+                    {{ classes|default:"0" }}
+
+                </div>
+
+                <div class="stat-description">
+
+                    Classes disponibles
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <div class="row mt-5 g-4">
+
+
+        <!-- =================================================
+             ACTIONS RAPIDES
+        ================================================== -->
+
+        <div class="col-xl-4 col-lg-6">
+
+            <div class="section-card">
+
+                <div class="section-title">
+
+                    <h4>
+
+                        <i class="bi bi-lightning-charge-fill text-warning"></i>
+
+                        Actions rapides
+
+                    </h4>
+
+                </div>
+
+
+                <a href="{% url 'etudiant_list' %}"
+                   class="btn btn-primary w-100 action-btn">
+
+                    <i class="bi bi-people-fill"></i>
+
+                    <span>
+
+                        Gestion des étudiants
+
+                        <small class="d-block opacity-75">
+                            Ajouter, modifier ou consulter
+                        </small>
+
+                    </span>
+
+                </a>
+
+
+                <a href="{% url 'saisie_note_groupee' %}"
+                   class="btn btn-warning w-100 action-btn">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                    <span>
+
+                        Saisie groupée des notes
+
+                        <small class="d-block opacity-75">
+                            Saisir les notes d'une classe
+                        </small>
+
+                    </span>
+
+                </a>
+
+
+                <a href="#"
+                   class="btn btn-success w-100 action-btn">
+
+                    <i class="bi bi-file-earmark-pdf-fill"></i>
+
+                    <span>
+
+                        Génération des bulletins
+
+                        <small class="d-block opacity-75">
+                            Générer les bulletins PDF
+                        </small>
+
+                    </span>
+
+                </a>
+
+
+                <a href="#"
+                   class="btn btn-info text-white w-100 action-btn">
+
+                    <i class="bi bi-bar-chart-fill"></i>
+
+                    <span>
+
+                        Rapports académiques
+
+                        <small class="d-block opacity-75">
+                            Consulter les statistiques
+                        </small>
+
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ETAT DU SYSTEME
+        ================================================== -->
+
+        <div class="col-xl-4 col-lg-6">
+
+            <div class="section-card">
+
+                <div class="section-title">
+
+                    <h4>
+
+                        <i class="bi bi-shield-check text-success"></i>
+
+                        État du système
+
+                    </h4>
+
+                </div>
+
+
+                <div class="system-item">
+
+                    <div class="system-left">
+
+                        <i class="bi bi-database-check text-success fs-5"></i>
+
+                        <span>
+                            Base de données
+                        </span>
+
+                    </div>
+
+                    <span class="status-badge status-online">
+                        OPÉRATIONNELLE
+                    </span>
+
+                </div>
+
+
+                <div class="system-item">
+
+                    <div class="system-left">
+
+                        <i class="bi bi-lock-fill text-primary fs-5"></i>
+
+                        <span>
+                            Authentification
+                        </span>
+
+                    </div>
+
+                    <span class="status-badge status-online">
+                        SÉCURISÉE
+                    </span>
+
+                </div>
+
+
+                <div class="system-item">
+
+                    <div class="system-left">
+
+                        <i class="bi bi-mortarboard-fill text-info fs-5"></i>
+
+                        <span>
+                            Modules BTS
+                        </span>
+
+                    </div>
+
+                    <span class="status-badge status-active">
+                        ACTIFS
+                    </span>
+
+                </div>
+
+
+                <div class="system-item">
+
+                    <div class="system-left">
+
+                        <i class="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
+
+                        <span>
+                            Génération PDF
+                        </span>
+
+                    </div>
+
+                    <span class="status-badge status-online">
+                        DISPONIBLE
+                    </span>
+
+                </div>
+
+
+                <div class="system-item">
+
+                    <div class="system-left">
+
+                        <i class="bi bi-cloud-check-fill text-success fs-5"></i>
+
+                        <span>
+                            Service applicatif
+                        </span>
+
+                    </div>
+
+                    <span class="status-badge status-online">
+                        EN LIGNE
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTIVITES RECENTES
+        ================================================== -->
+
+        <div class="col-xl-4">
+
+            <div class="section-card">
+
+                <div class="section-title">
+
+                    <h4>
+
+                        <i class="bi bi-clock-history text-primary"></i>
+
+                        Activités récentes
+
+                    </h4>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon bg-primary-subtle text-primary">
+
+                        <i class="bi bi-person-plus-fill"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="activity-title">
+                            Gestion des étudiants
+                        </div>
+
+                        <div class="activity-time">
+                            Module disponible
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon bg-warning-subtle text-warning">
+
+                        <i class="bi bi-pencil-square"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="activity-title">
+                            Saisie des notes
+                        </div>
+
+                        <div class="activity-time">
+                            Saisie groupée activée
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon bg-danger-subtle text-danger">
+
+                        <i class="bi bi-file-earmark-pdf-fill"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="activity-title">
+                            Bulletins PDF
+                        </div>
+
+                        <div class="activity-time">
+                            Génération disponible
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon bg-success-subtle text-success">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="activity-title">
+                            Système opérationnel
+                        </div>
+
+                        <div class="activity-time">
+                            Tous les modules fonctionnent
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESUME ACADEMIQUE
+    ====================================================== -->
+
+    <div class="row mt-4 g-4">
+
+        <div class="col-12">
+
+            <div class="section-card">
+
+                <div class="section-title">
+
+                    <h4>
+
+                        <i class="bi bi-grid-1x2-fill text-primary"></i>
+
+                        Vue d'ensemble académique
+
+                    </h4>
+
+                    <span class="badge bg-primary">
+                        BTS
+                    </span>
+
+                </div>
+
+
+                <div class="row g-3">
+
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="summary-box">
+
+                            <i class="bi bi-people-fill text-primary"></i>
+
+                            <div class="summary-number text-primary">
+
+                                {{ etudiants|default:"0" }}
+
+                            </div>
+
+                            <div class="summary-label">
+
+                                Étudiants inscrits
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="summary-box">
+
+                            <i class="bi bi-building-fill text-danger"></i>
+
+                            <div class="summary-number text-danger">
+
+                                {{ classes|default:"0" }}
+
+                            </div>
+
+                            <div class="summary-label">
+
+                                Classes
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="summary-box">
+
+                            <i class="bi bi-person-workspace text-warning"></i>
+
+                            <div class="summary-number text-warning">
+
+                                {{ professeurs|default:"0" }}
+
+                            </div>
+
+                            <div class="summary-label">
+
+                                Professeurs
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="summary-box">
+
+                            <i class="bi bi-mortarboard-fill text-success"></i>
+
+                            <div class="summary-number text-success">
+
+                                {{ filieres|default:"0" }}
+
+                            </div>
+
+                            <div class="summary-label">
+
+                                Filières
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

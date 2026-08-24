@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-6 col-md-8">
+
+            <!-- ================================================= -->
+            <!-- CARD PRINCIPALE -->
+            <!-- ================================================= -->
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+
+                <!-- ================================================= -->
+                <!-- HEADER -->
+                <!-- ================================================= -->
+
+                <div class="bg-primary text-white text-center py-4">
+
+                    <h3 class="mb-1 fw-bold">
+                        📘 Ajouter une matière
+                    </h3>
+
+                    <small class="opacity-75">
+                        Remplissez les informations de la matière
+                    </small>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- BODY -->
+                <!-- ================================================= -->
+
+                <div class="card-body p-4 p-md-5">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+
+                        <!-- ================================================= -->
+                        <!-- CODE MATIERE -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Code matière
+                            </label>
+
+                            <div class="input-modern">
+                                {{ form.code }}
+                            </div>
+
+                            {% if form.code.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.code.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- LIBELLE -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Libellé
+                            </label>
+
+                            <div class="input-modern">
+                                {{ form.libelle }}
+                            </div>
+
+                            {% if form.libelle.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.libelle.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- COEFFICIENT -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Coefficient
+                            </label>
+
+                            <div class="input-modern">
+                                {{ form.coefficient }}
+                            </div>
+
+                            {% if form.coefficient.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.coefficient.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- VOLUME HORAIRE -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Volume horaire
+                            </label>
+
+                            <div class="input-modern">
+                                {{ form.volume_horaire }}
+                            </div>
+
+                            {% if form.volume_horaire.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.volume_horaire.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- FILIERE BTS -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Filière BTS
+                            </label>
+
+                            <div class="input-modern">
+                                {{ form.filiere_bts }}
+                            </div>
+
+                            {% if form.filiere_bts.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.filiere_bts.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- GRANDE UNITE -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Grande unité
+                            </label>
+
+                            <div class="input-modern">
+                                {{ form.grande_unite }}
+                            </div>
+
+                            <small class="text-muted d-block mt-2">
+                                Sélectionnez l'enseignement auquel
+                                appartient cette matière.
+                            </small>
+
+                            {% if form.grande_unite.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.grande_unite.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- CATEGORIE -->
+                        <!-- ================================================= -->
+
+                        <!-- <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Catégorie
+                            </label>
+
+                            <div class="input-modern">
+                                {{ form.categorie }}
+                            </div>
+
+                            <small class="text-muted d-block mt-2">
+                                Sélectionnez la catégorie de cette matière.
+                            </small>
+
+                            {% if form.categorie.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.categorie.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div> -->
+
+
+                        <!-- ================================================= -->
+                        <!-- PROFESSEUR -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Professeur attribué
+                            </label>
+
+                            <div class="input-modern">
+                                {{ form.professeur }}
+                            </div>
+
+                            <small class="text-muted d-block mt-2">
+                                Saisissez le nom et prénom du professeur
+                                responsable de cette matière.
+                            </small>
+
+                            {% if form.professeur.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.professeur.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- BOUTON ENREGISTRER -->
+                        <!-- ================================================= -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100 py-3 fw-bold rounded-3 shadow-sm"
+                        >
+
+                            <i class="bi bi-check-circle me-2"></i>
+
+                            Enregistrer la matière
+
+                        </button>
+
+
+                        <!-- ================================================= -->
+                        <!-- RETOUR -->
+                        <!-- ================================================= -->
+
+                        <a
+                            href="{% url 'matiere_list' %}"
+                            class="btn btn-outline-secondary w-100 mt-3 py-2 rounded-3"
+                        >
+
+                            <i class="bi bi-arrow-left me-2"></i>
+
+                            Retour à la liste
+
+                        </a>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- STYLE -->
+<!-- ================================================= -->
+
+<style>
+
+    /* ================================================= */
+    /* CHAMPS */
+    /* ================================================= */
+
+    .input-modern input,
+    .input-modern select,
+    .input-modern textarea {
+
+        width: 100%;
+
+        padding: 12px 14px;
+
+        border-radius: 10px;
+
+        border: 1px solid #ddd;
+
+        transition: all 0.2s ease-in-out;
+
+        background: #fff;
+
+        font-size: 0.95rem;
+
+    }
+
+
+    /* ================================================= */
+    /* FOCUS */
+    /* ================================================= */
+
+    .input-modern input:focus,
+    .input-modern select:focus,
+    .input-modern textarea:focus {
+
+        border-color: #0d6efd;
+
+        box-shadow:
+            0 0 0 3px
+            rgba(13, 110, 253, 0.15);
+
+        outline: none;
+
+    }
+
+
+    /* ================================================= */
+    /* SELECT */
+    /* ================================================= */
+
+    .input-modern select {
+
+        cursor: pointer;
+
+    }
+
+
+    /* ================================================= */
+    /* LABEL */
+    /* ================================================= */
+
+    .form-label {
+
+        margin-bottom: 8px;
+
+    }
+
+
+    /* ================================================= */
+    /* ERREURS */
+    /* ================================================= */
+
+    .text-danger ul {
+
+        margin-bottom: 0;
+
+        padding-left: 20px;
+
+    }
+
+
+    /* ================================================= */
+    /* RESPONSIVE */
+    /* ================================================= */
+
+    @media (max-width: 576px) {
+
+        .card-body {
+
+            padding: 1.5rem !important;
+
+        }
+
+    }
+
+</style>
+
+{% endblock %}

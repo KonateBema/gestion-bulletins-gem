@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -31,8 +34,6 @@ SECRET_KEY = "django-insecure-v-5c)vcsv6_(ei75o6a1+@^d2y*%z$3ayp9$4-*uz+11vn_^es
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-import os
 
 # ALLOWED_HOSTS = os.environ.get(
 #     "ALLOWED_HOSTS",
@@ -100,12 +101,19 @@ WSGI_APPLICATION = "gestion_bulletins.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+#
+# En production (Render), on lit DATABASE_URL depuis les variables
+# d'environnement du service — il faut créer une base PostgreSQL sur
+# Render et copier son "Internal Database URL" dans DATABASE_URL.
+#
+# En local, si DATABASE_URL n'est pas définie, on retombe sur SQLite
+# (valeur "default" ci-dessous) pour ne rien casser dans ton
+# environnement de développement actuel.
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
 }
 
 
@@ -149,6 +157,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-

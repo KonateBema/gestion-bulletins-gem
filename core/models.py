@@ -101,6 +101,7 @@ class Classe(models.Model):
         verbose_name = "Classe"
         verbose_name_plural = "Classes"
         ordering = ["niveau", "nom"]
+
 # =========================
 # 4. MATIERE
 # =========================

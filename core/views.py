@@ -80,8 +80,218 @@ from django.views.decorators.csrf import csrf_protect
 # 🔐 LOGIN
 # ==========================================================
 
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
+
+from core.models import Profile
+
+
 @csrf_protect
 def login_view(request):
+
+    # ==========================================================
+    # UTILISATEUR DÉJÀ CONNECTÉ
+    # ==========================================================
+
+    if request.user.is_authenticated:
+
+        profile = Profile.objects.filter(
+            user=request.user
+        ).first()
+
+        if not profile:
+
+            logout(request)
+
+            return render(
+                request,
+                "login.html",
+                {
+                    "error": "Profil utilisateur introuvable."
+                }
+            )
+
+        # Normalisation du rôle
+        role = profile.role.lower()
+
+        # ======================================================
+        # REDIRECTION SELON LE RÔLE
+        # ======================================================
+
+        if role == "admin":
+
+            return redirect("dashboard_admin")
+
+        elif role == "gestionnaire":
+
+            return redirect("dashboard_gestionnaire")
+
+        elif role == "prof":
+
+            return redirect("dashboard_prof")
+
+        elif role == "etudiant":
+
+            return redirect("dashboard_etudiant")
+
+        else:
+
+            logout(request)
+
+            return render(
+                request,
+                "login.html",
+                {
+                    "error": "Rôle utilisateur non reconnu."
+                }
+            )
+
+    # ==========================================================
+    # FORMULAIRE DE CONNEXION
+    # ==========================================================
+
+    if request.method == "POST":
+
+        username = request.POST.get(
+            "username",
+            ""
+        ).strip()
+
+        password = request.POST.get(
+            "password",
+            ""
+        )
+
+        # ======================================================
+        # VÉRIFICATION DES CHAMPS
+        # ======================================================
+
+        if not username or not password:
+
+            return render(
+                request,
+                "login.html",
+                {
+                    "error":
+                    "Veuillez renseigner votre identifiant "
+                    "et votre mot de passe."
+                }
+            )
+
+        # ======================================================
+        # AUTHENTIFICATION DJANGO
+        # ======================================================
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is None:
+
+            return render(
+                request,
+                "login.html",
+                {
+                    "error":
+                    "Identifiant ou mot de passe incorrect."
+                }
+            )
+
+        # ======================================================
+        # CONNEXION
+        # ======================================================
+
+        login(
+            request,
+            user
+        )
+
+        # ======================================================
+        # RÉCUPÉRATION DU PROFIL
+        # ======================================================
+
+        profile = Profile.objects.filter(
+            user=user
+        ).first()
+
+        if not profile:
+
+            logout(request)
+
+            return render(
+                request,
+                "login.html",
+                {
+                    "error":
+                    "Profil utilisateur introuvable."
+                }
+            )
+
+        # ======================================================
+        # NORMALISATION DU RÔLE
+        # ======================================================
+
+        role = profile.role.lower()
+
+        # ======================================================
+        # REDIRECTION SELON LE RÔLE
+        # ======================================================
+
+        if role == "admin":
+
+            return redirect(
+                "dashboard_admin"
+            )
+
+        elif role == "gestionnaire":
+
+            return redirect(
+                "dashboard_gestionnaire"
+            )
+
+        elif role == "prof":
+
+            return redirect(
+                "dashboard_prof"
+            )
+
+        elif role == "etudiant":
+
+            return redirect(
+                "dashboard_etudiant"
+            )
+
+        # ======================================================
+        # RÔLE INCONNU
+        # ======================================================
+
+        logout(request)
+
+        return render(
+            request,
+            "login.html",
+            {
+                "error":
+                "Rôle utilisateur non reconnu."
+            }
+        )
+
+    # ==========================================================
+    # AFFICHAGE PAGE LOGIN
+    # ==========================================================
+
+    return render(
+        request,
+        "login.html"
+    )
+
+
+
+@csrf_protect
+def login_viewENS(request):
 
     # ==========================================================
     # UTILISATEUR DÉJÀ CONNECTÉ

@@ -1,211 +1,1405 @@
 {% extends 'base.html' %}
 
+{% block title %}Gestion des bulletins{% endblock %}
+
 {% block content %}
 
-<div class="container py-4">
+<style>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>📄 Liste des bulletins</h3>
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+.bulletins-page {
+    padding: 25px 0 50px;
+}
+
+.bulletins-page * {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.bulletins-header {
+    position: relative;
+    overflow: hidden;
+
+    padding: 30px;
+
+    margin-bottom: 25px;
+
+    border-radius: 24px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd 0%,
+            #6610f2 100%
+        );
+
+    box-shadow:
+        0 15px 35px rgba(13,110,253,.18);
+}
+
+.bulletins-header::before {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    border-radius: 50%;
+
+    right: -100px;
+    top: -150px;
+
+    background: rgba(255,255,255,.08);
+}
+
+.bulletins-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 200px;
+    height: 200px;
+
+    border-radius: 50%;
+
+    left: 40%;
+    bottom: -150px;
+
+    background: rgba(255,255,255,.06);
+}
+
+.bulletins-header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.bulletins-header-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    background: rgba(255,255,255,.15);
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    font-size: 25px;
+
+    margin-bottom: 15px;
+}
+
+.bulletins-header h2 {
+    font-size: 30px;
+
+    font-weight: 800;
+
+    margin-bottom: 7px;
+}
+
+.bulletins-header p {
+    margin: 0;
+
+    color: rgba(255,255,255,.85);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   STATISTIQUES
+========================================================= */
+
+.stat-card {
+    height: 100%;
+
+    padding: 20px;
+
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.06);
+
+    transition: all .25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 35px rgba(15,23,42,.10);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 21px;
+
+    margin-bottom: 13px;
+}
+
+.stat-label {
+    color: #64748b;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.stat-value {
+    color: #0f172a;
+
+    font-size: 27px;
+
+    font-weight: 800;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   FILTRE
+========================================================= */
+
+.filter-card {
+    padding: 22px;
+
+    margin: 25px 0;
+
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.05);
+}
+
+.filter-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #1e293b;
+
+    font-weight: 800;
+
+    margin-bottom: 18px;
+}
+
+.filter-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.form-label-modern {
+    display: block;
+
+    color: #475569;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    margin-bottom: 7px;
+}
+
+.form-control-modern,
+.form-select-modern {
+    width: 100%;
+
+    min-height: 45px;
+
+    padding: 10px 14px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    font-size: 14px;
+
+    transition: all .2s ease;
+}
+
+.form-control-modern:focus,
+.form-select-modern:focus {
+
+    background: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+
+    outline: none;
+}
+
+.btn-search {
+    min-height: 45px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-weight: 700;
+
+    transition: all .2s ease;
+}
+
+.btn-search:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 18px rgba(13,110,253,.18);
+}
+
+.btn-reset {
+    min-height: 45px;
+
+    border-radius: 12px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+
+.table-card {
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06);
+}
+
+.table-card-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid #eef1f5;
+}
+
+.table-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.table-title-icon {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 19px;
+}
+
+.table-title h5 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-weight: 800;
+}
+
+.table-title small {
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.modern-table {
+    margin: 0;
+}
+
+.modern-table thead th {
+
+    padding: 15px 18px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    white-space: nowrap;
+}
+
+.modern-table tbody td {
+
+    padding: 17px 18px;
+
+    color: #334155;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    font-size: 14px;
+
+    vertical-align: middle;
+}
+
+.modern-table tbody tr {
+    transition: all .2s ease;
+}
+
+.modern-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   ETUDIANT
+========================================================= */
+
+.student-info {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+.student-avatar {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-weight: 800;
+
+    font-size: 14px;
+}
+
+.student-name {
+    color: #0f172a;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.student-subtitle {
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    margin-top: 2px;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.info-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.badge-matricule {
+    background: #f1f5f9;
+
+    color: #475569;
+}
+
+.badge-classe {
+    background: #fff7ed;
+
+    color: #c2410c;
+}
+
+
+/* =========================================================
+   BOUTONS BULLETIN
+========================================================= */
+
+.bulletin-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    flex-wrap: wrap;
+}
+
+.btn-bulletin {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 8px 11px;
+
+    border-radius: 10px;
+
+    border: 1px solid;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition: all .2s ease;
+}
+
+.btn-bulletin:hover {
+    transform: translateY(-2px);
+}
+
+.btn-s1 {
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    border-color: #bfdbfe;
+}
+
+.btn-s1:hover {
+
+    background: #2563eb;
+
+    color: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 7px 15px rgba(37,99,235,.20);
+}
+
+.btn-s2 {
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    border-color: #a7f3d0;
+}
+
+.btn-s2:hover {
+
+    background: #059669;
+
+    color: white;
+
+    border-color: #059669;
+
+    box-shadow:
+        0 7px 15px rgba(5,150,105,.20);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+
+    padding: 60px 20px !important;
+
+    text-align: center;
+}
+
+.empty-icon {
+
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 16px;
+
+    border-radius: 20px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 30px;
+}
+
+.empty-state h5 {
+
+    color: #334155;
+
+    font-weight: 800;
+}
+
+.empty-state p {
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination-wrapper {
+
+    padding: 20px;
+
+    border-top: 1px solid #f1f5f9;
+}
+
+.pagination .page-link {
+
+    min-width: 38px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 3px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 10px !important;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.pagination .page-link:hover {
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    border-color: #bfdbfe;
+}
+
+.pagination .active .page-link {
+
+    background: #2563eb;
+
+    color: white;
+
+    border-color: #2563eb;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .bulletins-page {
+        padding-top: 15px;
+    }
+
+    .bulletins-header {
+        padding: 22px;
+
+        border-radius: 20px;
+    }
+
+    .bulletins-header h2 {
+        font-size: 23px;
+    }
+
+    .table-card-header {
+        padding: 17px;
+    }
+
+    .modern-table thead th,
+    .modern-table tbody td {
+        padding: 13px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .bulletins-header {
+        margin-bottom: 18px;
+    }
+
+    .filter-card {
+        padding: 17px;
+    }
+
+    .table-title h5 {
+        font-size: 15px;
+    }
+
+    .bulletin-actions {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .btn-bulletin {
+        justify-content: center;
+    }
+
+}
+
+</style>
+
+<div class="container-fluid bulletins-page">
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<div class="bulletins-header">
+
+<div class="bulletins-header-content">
+
+    <div class="d-flex justify-content-between align-items-center gap-3">
+
+        <div>
+
+            <div class="bulletins-header-icon">
+
+                <i class="bi bi-file-earmark-pdf-fill"></i>
+
+            </div>
+
+            <h2>
+                Gestion des bulletins
+            </h2>
+
+            <p>
+                Consultez, recherchez et générez les bulletins scolaires des étudiants.
+            </p>
+
+        </div>
+
     </div>
 
-    <div class="card shadow-sm">
+</div>
 
-        <div class="card-body p-0">
+</div>
 
-            <!-- 🔎 FILTRES -->
-            <div class="card mb-3">
-                <div class="card-body">
+<!-- =====================================================
+     STATISTIQUES
+====================================================== -->
 
-                    <form method="GET">
+<div class="row g-3">
 
-                        <div class="row">
+<!-- ETUDIANTS -->
 
-                            <!-- Matricule -->
-                            <div class="col-md-3">
-                                <input type="text"
-                                       name="matricule"
-                                       value="{{ request.GET.matricule }}"
-                                       class="form-control"
-                                       placeholder="🔎 Matricule">
+<div class="col-xl-4 col-md-6">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-primary-subtle text-primary">
+
+            <i class="bi bi-people-fill"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Étudiants
+        </div>
+
+        <div class="stat-value">
+
+            {{ page_obj.paginator.count }}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CLASSES -->
+
+<div class="col-xl-4 col-md-6">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-warning-subtle text-warning">
+
+            <i class="bi bi-building-fill"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Classes
+        </div>
+
+        <div class="stat-value">
+
+            {{ classes|length }}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- BULLETINS -->
+
+<div class="col-xl-4 col-md-6">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-success-subtle text-success">
+
+            <i class="bi bi-file-earmark-check-fill"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Bulletins disponibles
+        </div>
+
+        <div class="stat-value">
+
+            {{ page_obj.paginator.count }}
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- =====================================================
+     FILTRES
+====================================================== -->
+
+<div class="filter-card">
+
+
+<div class="filter-title">
+
+    <div class="filter-icon">
+
+        <i class="bi bi-funnel-fill"></i>
+
+    </div>
+
+    Rechercher un étudiant
+
+</div>
+
+
+<form method="GET">
+
+    <div class="row g-3 align-items-end">
+
+
+        <!-- MATRICULE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <label class="form-label-modern">
+                Matricule
+            </label>
+
+            <input
+                type="text"
+                name="matricule"
+                class="form-control-modern"
+                placeholder="Ex : 2025BTS001"
+                value="{{ request.GET.matricule }}"
+            >
+
+        </div>
+
+
+        <!-- TELEPHONE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <label class="form-label-modern">
+                Téléphone
+            </label>
+
+            <input
+                type="text"
+                name="telephone"
+                class="form-control-modern"
+                placeholder="Numéro de téléphone"
+                value="{{ request.GET.telephone }}"
+            >
+
+        </div>
+
+
+        <!-- FILIERE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <label class="form-label-modern">
+                Filière
+            </label>
+
+            <input
+                type="text"
+                name="filiere"
+                class="form-control-modern"
+                placeholder="Ex : Informatique"
+                value="{{ request.GET.filiere }}"
+            >
+
+        </div>
+
+
+        <!-- CLASSE -->
+
+        <div class="col-xl-2 col-md-6">
+
+            <label class="form-label-modern">
+                Classe
+            </label>
+
+            <select
+                name="classe"
+                class="form-select-modern"
+            >
+
+                <option value="">
+                    Toutes les classes
+                </option>
+
+                {% for c in classes %}
+
+                    <option
+                        value="{{ c.id }}"
+                        {% if request.GET.classe == c.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ c.nom }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="col-xl-1 col-md-6">
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-search w-100"
+                title="Rechercher"
+            >
+
+                <i class="bi bi-search"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- RESET -->
+
+    {% if request.GET.matricule or request.GET.telephone or request.GET.filiere or request.GET.classe %}
+
+    <div class="mt-3">
+
+        <a
+            href="{% url 'bulletin_list' %}"
+            class="btn btn-outline-secondary btn-sm btn-reset"
+        >
+
+            <i class="bi bi-x-circle me-1"></i>
+
+            Réinitialiser les filtres
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</form>
+
+
+</div>
+
+<!-- =====================================================
+     TABLE
+====================================================== -->
+
+<div class="table-card">
+
+
+<!-- TABLE HEADER -->
+
+<div class="table-card-header">
+
+    <div class="table-title">
+
+        <div class="table-title-icon">
+
+            <i class="bi bi-list-ul"></i>
+
+        </div>
+
+        <div>
+
+            <h5>
+                Liste des étudiants
+            </h5>
+
+            <small>
+                Génération des bulletins par semestre
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2">
+
+        {{ page_obj.paginator.count }}
+        étudiant{{ page_obj.paginator.count|pluralize }}
+
+    </span>
+
+</div>
+
+
+
+<!-- TABLE -->
+
+<div class="table-responsive">
+
+    <table class="table modern-table align-middle">
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Matricule
+                </th>
+
+                <th>
+                    Étudiant
+                </th>
+
+                <th>
+                    Classe
+                </th>
+
+                <th>
+                    Bulletins
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+            {% for e in etudiants %}
+
+            <tr>
+
+
+                <!-- MATRICULE -->
+
+                <td>
+
+                    {% if e.matricule %}
+
+                        <span class="info-badge badge-matricule">
+
+                            <i class="bi bi-person-vcard"></i>
+
+                            {{ e.matricule }}
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="text-muted">
+                            Non renseigné
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- ETUDIANT -->
+
+                <td>
+
+                    <div class="student-info">
+
+                        <div class="student-avatar">
+
+                            {{ e.nom|slice:":1"|upper }}
+
+                        </div>
+
+                        <div>
+
+                            <div class="student-name">
+
+                                {{ e }}
+
                             </div>
 
-                            <!-- Téléphone -->
-                            <div class="col-md-3">
-                                <input type="text"
-                                       name="telephone"
-                                       value="{{ request.GET.telephone }}"
-                                       class="form-control"
-                                       placeholder="📞 Téléphone">
-                            </div>
+                            <div class="student-subtitle">
 
-                            <!-- Filière -->
-                            <div class="col-md-3">
-                                <input type="text"
-                                       name="filiere"
-                                       value="{{ request.GET.filiere }}"
-                                       class="form-control"
-                                       placeholder="🎓 Filière">
-                            </div>
+                                Étudiant
 
-                            <!-- Classe -->
-                            <div class="col-md-2">
-                                <select name="classe" class="form-select">
-
-                                    <option value="">Toutes classes</option>
-
-                                    {% for c in classes %}
-                                        <option value="{{ c.id }}"
-                                            {% if request.GET.classe == c.id|stringformat:"s" %}
-                                                selected
-                                            {% endif %}>
-                                            {{ c.nom }}
-                                        </option>
-                                    {% endfor %}
-
-                                </select>
-                            </div>
-
-                            <!-- Bouton -->
-                            <div class="col-md-1">
-                                <button class="btn btn-primary w-100">
-                                    🔍
-                                </button>
                             </div>
 
                         </div>
 
-                    </form>
+                    </div>
 
-                </div>
-            </div>
+                </td>
 
-            <!-- 📋 TABLE -->
-            <table class="table table-hover mb-0">
 
-                <thead class="table-dark">
-                    <tr>
-                        <th>Matricule</th>
-                        <th>Étudiant</th>
-                        <th>Classe</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+                <!-- CLASSE -->
 
-                <tbody>
+                <td>
 
-                    {% for e in etudiants %}
-                    <tr>
+                    {% if e.classe %}
 
-                        <!-- MATRICULE -->
-                        <td>
-                            {% if e.matricule %}
-                                {{ e.matricule }}
-                            {% else %}
-                                <span class="text-danger">-</span>
-                            {% endif %}
-                        </td>
+                        <span class="info-badge badge-classe">
 
-                        <!-- ETUDIANT -->
-                        <td>{{ e }}</td>
+                            <i class="bi bi-building"></i>
 
-                        <!-- CLASSE -->
-                        <td>
-                            {% if e.classe %}
-                                {{ e.classe.nom }}
-                            {% else %}
-                                <span class="text-danger">Aucune classe</span>
-                            {% endif %}
-                        </td>
+                            {{ e.classe.nom }}
 
-                        <!-- ACTION -->
-                        <!-- <td>
-                            {% if e.classe %}
-                                <a href="{% url 'bulletin_pdf' e.id e.classe.id %}"
-                                   class="btn btn-primary btn-sm">
-                                    📄 Imprimer mon Bulletin
-                                </a>
-                            {% else %}
-                                <span class="text-muted">Indisponible</span>
-                            {% endif %}
-                        </td> -->
-                        <td>
-                            {% if e.classe %}
-                                <a href="{% url 'bulletin_pdf' e.id e.classe.id 1 %}"
-                                   class="btn btn-primary btn-sm mb-1">
-                                    📄 Bulletin S1
-                                </a>
-                        
-                                <a href="{% url 'bulletin_pdf' e.id e.classe.id 2 %}"
-                                   class="btn btn-success btn-sm">
-                                    📄 Bulletin S2
-                                </a>
-                            {% else %}
-                                <span class="text-muted">Indisponible</span>
-                            {% endif %}
-                        </td>
+                        </span>
 
-                    </tr>
+                    {% else %}
 
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center p-4">
-                            Aucun étudiant trouvé
-                        </td>
-                    </tr>
-                    {% endfor %}
+                        <span class="text-danger small">
 
-                </tbody>
+                            <i class="bi bi-exclamation-circle"></i>
 
-            </table>
+                            Aucune classe
 
-            <!-- 📄 PAGINATION -->
-            <nav class="mt-3">
-                <ul class="pagination justify-content-center">
+                        </span>
 
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="?page={{ page_obj.previous_page_number }}
-                           {% if request.GET.matricule %}&matricule={{ request.GET.matricule }}{% endif %}
-                           {% if request.GET.telephone %}&telephone={{ request.GET.telephone }}{% endif %}
-                           {% if request.GET.filiere %}&filiere={{ request.GET.filiere }}{% endif %}
-                           {% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}">
-                            Précédent
-                        </a>
-                    </li>
                     {% endif %}
 
-                    {% for num in page_obj.paginator.page_range %}
-                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                        <a class="page-link"
-                           href="?page={{ num }}
-                           {% if request.GET.matricule %}&matricule={{ request.GET.matricule }}{% endif %}
-                           {% if request.GET.telephone %}&telephone={{ request.GET.telephone }}{% endif %}
-                           {% if request.GET.filiere %}&filiere={{ request.GET.filiere }}{% endif %}
-                           {% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}">
-                            {{ num }}
-                        </a>
-                    </li>
-                    {% endfor %}
+                </td>
 
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="?page={{ page_obj.next_page_number }}
-                           {% if request.GET.matricule %}&matricule={{ request.GET.matricule }}{% endif %}
-                           {% if request.GET.telephone %}&telephone={{ request.GET.telephone }}{% endif %}
-                           {% if request.GET.filiere %}&filiere={{ request.GET.filiere }}{% endif %}
-                           {% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}">
-                            Suivant
-                        </a>
-                    </li>
+
+                <!-- BULLETINS -->
+
+                <td>
+
+                    {% if e.classe %}
+
+                        <div class="bulletin-actions">
+
+
+                            <a
+                                href="{% url 'bulletin_pdf' e.id e.classe.id 1 %}"
+                                class="btn-bulletin btn-s1"
+                                title="Générer le bulletin du premier semestre"
+                            >
+
+                                <i class="bi bi-file-earmark-pdf"></i>
+
+                                Bulletin S1
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'bulletin_pdf' e.id e.classe.id 2 %}"
+                                class="btn-bulletin btn-s2"
+                                title="Générer le bulletin du deuxième semestre"
+                            >
+
+                                <i class="bi bi-file-earmark-pdf"></i>
+
+                                Bulletin S2
+
+                            </a>
+
+
+                        </div>
+
+                    {% else %}
+
+                        <span class="text-muted small">
+
+                            <i class="bi bi-lock"></i>
+
+                            Bulletin indisponible
+
+                        </span>
+
                     {% endif %}
 
-                </ul>
-            </nav>
+                </td>
 
-        </div>
-    </div>
+
+            </tr>
+
+
+            {% empty %}
+
+
+            <tr>
+
+                <td colspan="4" class="empty-state">
+
+                    <div class="empty-icon">
+
+                        <i class="bi bi-file-earmark-x"></i>
+
+                    </div>
+
+                    <h5>
+                        Aucun étudiant trouvé
+                    </h5>
+
+                    <p>
+                        Aucun étudiant ne correspond aux critères de recherche.
+                    </p>
+
+                    <a
+                        href="{% url 'bulletin_list' %}"
+                        class="btn btn-primary rounded-pill px-4"
+                    >
+
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+
+                        Réinitialiser
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+
+            {% endfor %}
+
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+
+<!-- =====================================================
+     PAGINATION
+====================================================== -->
+
+{% if page_obj.paginator.num_pages > 1 %}
+
+<div class="pagination-wrapper">
+
+    <nav>
+
+        <ul class="pagination justify-content-center mb-0">
+
+
+            {% if page_obj.has_previous %}
+
+            <li class="page-item">
+
+                <a
+                    class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}{% if request.GET.matricule %}&matricule={{ request.GET.matricule }}{% endif %}{% if request.GET.telephone %}&telephone={{ request.GET.telephone }}{% endif %}{% if request.GET.filiere %}&filiere={{ request.GET.filiere }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}"
+                    title="Page précédente"
+                >
+
+                    <i class="bi bi-chevron-left"></i>
+
+                </a>
+
+            </li>
+
+            {% endif %}
+
+
+
+            <li class="page-item active">
+
+                <span class="page-link">
+
+                    {{ page_obj.number }}
+
+                    <span class="opacity-75">
+
+                        / {{ page_obj.paginator.num_pages }}
+
+                    </span>
+
+                </span>
+
+            </li>
+
+
+
+            {% if page_obj.has_next %}
+
+            <li class="page-item">
+
+                <a
+                    class="page-link"
+                    href="?page={{ page_obj.next_page_number }}{% if request.GET.matricule %}&matricule={{ request.GET.matricule }}{% endif %}{% if request.GET.telephone %}&telephone={{ request.GET.telephone }}{% endif %}{% if request.GET.filiere %}&filiere={{ request.GET.filiere }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}"
+                    title="Page suivante"
+                >
+
+                    <i class="bi bi-chevron-right"></i>
+
+                </a>
+
+            </li>
+
+            {% endif %}
+
+
+        </ul>
+
+    </nav>
+
+</div>
+
+{% endif %}
+
+
+</div>
 
 </div>
 

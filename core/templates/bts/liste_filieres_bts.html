@@ -1,411 +1,1202 @@
+
 {% extends 'base.html' %}
 
 {% block title %}
-Filières BTS
+Gestion des filières BTS
 {% endblock %}
-
 
 {% block content %}
 
-<div class="container-fluid py-4">
-
-
-<!-- ===========================
-        HEADER
-=========================== -->
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-
-
-<div>
-
-<h2 class="fw-bold mb-1">
-🎓 Gestion des Filières BTS
-</h2>
-
-
-<p class="text-muted mb-0">
-Administration des formations BTS
-</p>
-
-
-</div>
-
-
-
-<div class="d-flex gap-2">
-
-
-<span class="badge bg-primary fs-6 p-3">
-
-Total :
-{{ filieres|length }}
-
-</span>
-
-
-
-<a href="{% url 'ajouter_filiere_bts' %}"
-class="btn btn-primary shadow-sm px-4">
-
-
-➕ Nouvelle Filière
-
-
-</a>
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-<!-- ===========================
-        RECHERCHE
-=========================== -->
-
-
-<div class="card border-0 shadow-sm rounded-4 mb-4">
-
-
-<div class="card-body">
-
-
-<div class="row">
-
-
-<div class="col-md-5">
-
-
-<input type="text"
-id="searchInput"
-class="form-control"
-placeholder="🔎 Rechercher une filière...">
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- ===========================
-        TABLE
-=========================== -->
-
-
-<div class="card border-0 shadow-sm rounded-4">
-
-
-<div class="card-body p-0">
-
-
-<div class="table-responsive">
-
-
-<table class="table table-hover align-middle mb-0"
-id="filiereTable">
-
-
-
-<thead class="table-dark">
-
-
-<tr>
-
-<th class="ps-4">
-Code
-</th>
-
-
-<th>
-Nom de la filière
-</th>
-
-
-<th>
-Statut
-</th>
-
-
-<th class="text-end pe-4">
-Actions
-</th>
-
-
-</tr>
-
-
-</thead>
-
-
-
-
-
-<tbody>
-
-
-{% for filiere in filieres %}
-
-
-<tr>
-
-
-
-<td class="ps-4">
-
-<span class="badge bg-secondary">
-BTS
-</span>
-
-
-</td>
-
-
-
-
-<td class="fw-semibold">
-
-🎓 {{ filiere.nom }}
-
-</td>
-
-
-
-
-
-<td>
-
-<span class="badge bg-success">
-
-Active
-
-</span>
-
-
-</td>
-
-
-
-
-
-<td class="text-end pe-4">
-
-
-<a href="{% url 'modifier_filiere_bts' filiere.id %}"
-
-class="btn btn-outline-warning btn-sm me-2">
-
-✏️
-
-</a>
-
-
-
-
-<a href="{% url 'supprimer_filiere_bts' filiere.id %}"
-
-class="btn btn-outline-danger btn-sm"
-
-onclick="return confirm('Voulez-vous supprimer cette filière BTS ?');">
-
-
-🗑️
-
-
-</a>
-
-
-</td>
-
-
-
-</tr>
-
-
-
-{% empty %}
-
-
-
-
-<tr>
-
-<td colspan="4"
-class="text-center py-5">
-
-
-<div class="text-muted">
-
-
-<h5>
-📭 Aucune filière BTS
-</h5>
-
-
-<p>
-Commencez par créer une filière.
-</p>
-
-
-
-<a href="{% url 'ajouter_filiere_bts' %}"
-
-class="btn btn-primary">
-
-
-➕ Ajouter
-
-
-</a>
-
-
-
-</div>
-
-
-</td>
-
-
-</tr>
-
-
-
-{% endfor %}
-
-
-
-
-</tbody>
-
-
-
-</table>
-
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- ===========================
-        SCRIPT RECHERCHE
-=========================== -->
-
-
-<script>
-
-
-document
-.getElementById("searchInput")
-.addEventListener("keyup", function(){
-
-
-let value = this.value.toLowerCase();
-
-
-let rows = document
-.querySelectorAll("#filiereTable tbody tr");
-
-
-
-rows.forEach(row => {
-
-
-let text = row.innerText.toLowerCase();
-
-
-row.style.display =
-text.includes(value)
-? ""
-: "none";
-
-
-});
-
-
-});
-
-
-
-</script>
-
-
-
-
-
-
 <style>
 
+/* =========================================================
+   GLOBAL
+========================================================= */
 
-.card {
+.filieres-page {
+    padding: 25px 0 50px;
+}
 
-transition:.3s;
-
+.filieres-page * {
+    box-sizing: border-box;
 }
 
 
+/* =========================================================
+   HEADER
+========================================================= */
 
-.card:hover {
+.filiere-header {
+    position: relative;
+    overflow: hidden;
 
-box-shadow:
-0 10px 30px rgba(0,0,0,.12);
+    padding: 30px;
 
+    border-radius: 24px;
+
+    margin-bottom: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd 0%,
+            #6610f2 100%
+        );
+
+    color: white;
+
+    box-shadow:
+        0 15px 35px rgba(13,110,253,.18);
+}
+
+.filiere-header::before {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.08);
+
+    right: -90px;
+    top: -150px;
+}
+
+.filiere-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.06);
+
+    left: 40%;
+    bottom: -130px;
+}
+
+.filiere-header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.filiere-icon {
+    width: 58px;
+    height: 58px;
+
+    border-radius: 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255,255,255,.15);
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    font-size: 25px;
+
+    margin-bottom: 15px;
+}
+
+.filiere-header h2 {
+    font-size: 30px;
+
+    font-weight: 800;
+
+    margin-bottom: 7px;
+}
+
+.filiere-header p {
+    margin: 0;
+
+    color: rgba(255,255,255,.85);
+
+    font-size: 14px;
 }
 
 
+/* =========================================================
+   BUTTON HEADER
+========================================================= */
 
-.table tbody tr:hover {
+.btn-new-filiere {
+    background: white;
 
-background:#f8f9fa;
+    color: #0d6efd;
 
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 13px;
+
+    font-weight: 700;
+
+    transition: all .25s ease;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.12);
+}
+
+.btn-new-filiere:hover {
+    color: #0d6efd;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.18);
 }
 
 
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.stats-grid {
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    height: 100%;
+
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.06);
+
+    transition: all .25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 35px rgba(15,23,42,.10);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 21px;
+
+    margin-bottom: 13px;
+}
+
+.stat-label {
+    color: #64748b;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 28px;
+
+    font-weight: 800;
+
+    color: #0f172a;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   SEARCH CARD
+========================================================= */
+
+.search-card {
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 20px;
+
+    padding: 22px;
+
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.05);
+}
+
+.search-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-weight: 800;
+
+    color: #1e293b;
+
+    margin-bottom: 18px;
+}
+
+.search-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 11px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.search-input {
+    min-height: 47px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    padding: 10px 15px;
+
+    font-size: 14px;
+
+    transition: all .2s ease;
+}
+
+.search-input:focus {
+    background: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+
+    outline: none;
+}
+
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+
+.filiere-table-card {
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06);
+}
+
+.table-card-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid #eef1f5;
+}
+
+.table-heading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.table-heading-icon {
+    width: 43px;
+    height: 43px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 19px;
+}
+
+.table-heading h5 {
+    margin: 0;
+
+    font-weight: 800;
+
+    color: #0f172a;
+}
+
+.table-heading small {
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.modern-filiere-table {
+    margin: 0;
+}
+
+.modern-filiere-table thead th {
+    background: #f8fafc;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    font-weight: 800;
+
+    padding: 15px 20px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    white-space: nowrap;
+}
+
+.modern-filiere-table tbody td {
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    vertical-align: middle;
+}
+
+.modern-filiere-table tbody tr {
+    transition: all .2s ease;
+}
+
+.modern-filiere-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.modern-filiere-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   CODE
+========================================================= */
+
+.code-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    border-radius: 9px;
+
+    background: #f1f5f9;
+
+    color: #475569;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: .3px;
+}
+
+
+/* =========================================================
+   FILIERE
+========================================================= */
+
+.filiere-name {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.filiere-name-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 11px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 12px;
+
+    border-radius: 9px;
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #10b981;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.action-buttons {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 7px;
+}
+
+.action-btn {
+    width: 37px;
+    height: 37px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    border: 1px solid;
+
+    transition: all .2s ease;
+}
+
+.action-edit {
+    color: #d97706;
+
+    border-color: #fde68a;
+
+    background: #fffbeb;
+}
+
+.action-edit:hover {
+    color: white;
+
+    background: #f59e0b;
+
+    border-color: #f59e0b;
+
+    transform: translateY(-2px);
+}
+
+.action-delete {
+    color: #dc2626;
+
+    border-color: #fecaca;
+
+    background: #fef2f2;
+}
+
+.action-delete:hover {
+    color: white;
+
+    background: #dc2626;
+
+    border-color: #dc2626;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+    padding: 65px 20px !important;
+
+    text-align: center;
+}
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+
+    margin: auto auto 16px;
+
+    border-radius: 21px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 30px;
+}
+
+.empty-state h5 {
+    font-weight: 800;
+
+    color: #334155;
+}
+
+.empty-state p {
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .filieres-page {
+        padding-top: 15px;
+    }
+
+    .filiere-header {
+        padding: 22px;
+
+        border-radius: 20px;
+    }
+
+    .filiere-header h2 {
+        font-size: 23px;
+    }
+
+    .filiere-header .d-flex {
+        align-items: flex-start !important;
+    }
+
+    .btn-new-filiere {
+        padding: 10px 13px;
+
+        font-size: 13px;
+    }
+
+    .table-card-header {
+        padding: 17px;
+    }
+
+    .modern-filiere-table thead th,
+    .modern-filiere-table tbody td {
+        padding: 13px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .filiere-header {
+        margin-bottom: 18px;
+    }
+
+    .filiere-header .d-flex {
+        flex-direction: column;
+
+        gap: 18px;
+    }
+
+    .btn-new-filiere {
+        width: 100%;
+    }
+
+    .search-card {
+        padding: 17px;
+    }
+
+    .table-heading h5 {
+        font-size: 15px;
+    }
+
+    .table-heading small {
+        display: none;
+    }
+
+}
 
 </style>
 
 
+<div class="container-fluid filieres-page">
 
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<div class="filiere-header">
+
+    <div class="filiere-header-content">
+
+        <div class="d-flex justify-content-between align-items-center gap-3">
+
+            <div>
+
+                <div class="filiere-icon">
+
+                    <i class="bi bi-mortarboard-fill"></i>
+
+                </div>
+
+                <h2>
+                    Gestion des filières BTS
+                </h2>
+
+                <p>
+                    Gérez les formations, programmes et filières BTS
+                    de votre établissement.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'ajouter_filiere_bts' %}"
+                class="btn btn-new-filiere"
+            >
+
+                <i class="bi bi-plus-circle-fill me-1"></i>
+
+                Nouvelle filière
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     STATISTIQUES
+====================================================== -->
+
+<div class="row g-3 stats-grid">
+
+
+    <!-- TOTAL -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="stat-icon bg-primary-subtle text-primary">
+
+                <i class="bi bi-mortarboard-fill"></i>
+
+            </div>
+
+            <div class="stat-label">
+                Total des filières
+            </div>
+
+            <div class="stat-value">
+
+                {{ filieres|length }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTIVES -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="stat-icon bg-success-subtle text-success">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+            </div>
+
+            <div class="stat-label">
+                Filières actives
+            </div>
+
+            <div class="stat-value">
+
+                {{ filieres|length }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FORMATION -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="stat-icon bg-warning-subtle text-warning">
+
+                <i class="bi bi-book-half"></i>
+
+            </div>
+
+            <div class="stat-label">
+                Formations BTS
+            </div>
+
+            <div class="stat-value">
+                BTS
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ETAT -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="stat-icon bg-info-subtle text-info">
+
+                <i class="bi bi-bar-chart-fill"></i>
+
+            </div>
+
+            <div class="stat-label">
+                État du catalogue
+            </div>
+
+            <div class="stat-value">
+                Actif
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     RECHERCHE
+====================================================== -->
+
+<div class="search-card">
+
+    <div class="search-title">
+
+        <div class="search-icon">
+
+            <i class="bi bi-search"></i>
+
+        </div>
+
+        Rechercher une filière
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-lg-6 col-md-8">
+
+            <div class="position-relative">
+
+                <i
+                    class="bi bi-search position-absolute top-50 translate-middle-y ms-3 text-muted"
+                ></i>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="form-control search-input ps-5"
+                    placeholder="Rechercher par nom de filière..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TABLE
+====================================================== -->
+
+<div class="filiere-table-card">
+
+
+    <!-- TABLE HEADER -->
+
+    <div class="table-card-header">
+
+        <div class="table-heading">
+
+            <div class="table-heading-icon">
+
+                <i class="bi bi-list-ul"></i>
+
+            </div>
+
+            <div>
+
+                <h5>
+                    Liste des filières
+                </h5>
+
+                <small>
+                    Filières BTS enregistrées dans le système
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <span
+            class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2"
+        >
+
+            <i class="bi bi-collection me-1"></i>
+
+            {{ filieres|length }}
+            filière{{ filieres|length|pluralize }}
+
+        </span>
+
+    </div>
+
+
+
+    <!-- TABLE -->
+
+    <div class="table-responsive">
+
+        <table
+            class="table modern-filiere-table align-middle"
+            id="filiereTable"
+        >
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Code
+                    </th>
+
+                    <th>
+                        Filière
+                    </th>
+
+                    <th>
+                        Statut
+                    </th>
+
+                    <th class="text-end">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for filiere in filieres %}
+
+            <tr>
+
+
+                <!-- CODE -->
+
+                <td>
+
+                    <span class="code-badge">
+
+                        <i class="bi bi-hash"></i>
+
+                        BTS
+
+                    </span>
+
+                </td>
+
+
+                <!-- NOM -->
+
+                <td>
+
+                    <div class="filiere-name">
+
+                        <div class="filiere-name-icon">
+
+                            <i class="bi bi-mortarboard-fill"></i>
+
+                        </div>
+
+                        <span>
+
+                            {{ filiere.nom }}
+
+                        </span>
+
+                    </div>
+
+                </td>
+
+
+                <!-- STATUT -->
+
+                <td>
+
+                    <span class="status-badge">
+
+                        <span class="status-dot"></span>
+
+                        Active
+
+                    </span>
+
+                </td>
+
+
+                <!-- ACTIONS -->
+
+                <td>
+
+                    <div class="action-buttons">
+
+
+                        <a
+                            href="{% url 'modifier_filiere_bts' filiere.id %}"
+                            class="action-btn action-edit"
+                            title="Modifier la filière"
+                        >
+
+                            <i class="bi bi-pencil-fill"></i>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'supprimer_filiere_bts' filiere.id %}"
+                            class="action-btn action-delete"
+                            title="Supprimer la filière"
+                            onclick="return confirm('Voulez-vous vraiment supprimer cette filière BTS ?');"
+                        >
+
+                            <i class="bi bi-trash3-fill"></i>
+
+                        </a>
+
+
+                    </div>
+
+                </td>
+
+
+            </tr>
+
+
+            {% empty %}
+
+
+            <!-- EMPTY -->
+
+            <tr>
+
+                <td
+                    colspan="4"
+                    class="empty-state"
+                >
+
+                    <div class="empty-icon">
+
+                        <i class="bi bi-mortarboard"></i>
+
+                    </div>
+
+                    <h5>
+                        Aucune filière BTS
+                    </h5>
+
+                    <p>
+                        Aucune filière n'est actuellement enregistrée.
+                    </p>
+
+
+                    <a
+                        href="{% url 'ajouter_filiere_bts' %}"
+                        class="btn btn-primary rounded-pill px-4"
+                    >
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Créer une filière
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     SEARCH SCRIPT
+====================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const rows =
+        document.querySelectorAll(
+            "#filiereTable tbody tr"
+        );
+
+
+    searchInput.addEventListener("input", function () {
+
+        const value =
+            this.value
+                .toLowerCase()
+                .trim();
+
+
+        rows.forEach(function (row) {
+
+            const text =
+                row.innerText.toLowerCase();
+
+
+            row.style.display =
+                text.includes(value)
+                    ? ""
+                    : "none";
+
+        });
+
+    });
+
+});
+
+</script>
 
 {% endblock %}
+

@@ -1,421 +1,1536 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Gestion des matières BTS
+{% endblock %}
 
 {% block content %}
 
+<style>
 
-<div class="container py-4">
+/* =========================================================
+   GLOBAL
+========================================================= */
 
+.matiere-page {
+    padding: 10px 5px 40px;
+    font-family: "Inter", "Segoe UI", sans-serif;
+}
 
-    <!-- HEADER -->
+/* =========================================================
+   HEADER
+========================================================= */
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
+.page-header {
+    position: relative;
+    overflow: hidden;
+    padding: 28px 30px;
+    border-radius: 24px;
+    margin-bottom: 25px;
 
-    <div>
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd 0%,
+            #4f46e5 55%,
+            #7c3aed 100%
+        );
 
-        <h3 class="fw-bold">
-            📚 Gestion des matières BTS
-        </h3>
+    color: white;
 
-        <p class="text-muted mb-0">
-            Gestion des matières par filière
-        </p>
+    box-shadow:
+        0 15px 35px rgba(37, 99, 235, .20);
+}
 
-    </div>
+.page-header::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    right: -70px;
+    top: -100px;
+}
 
+.page-header::after {
+    content: "";
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+    right: 180px;
+    bottom: -100px;
+}
 
-    <div class="d-flex gap-2">
+.page-header-content {
+    position: relative;
+    z-index: 2;
+}
 
-        <!-- GRANDE UNITE -->
+.page-header h2 {
+    font-size: 27px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
 
-        <a
-            href="{% url 'grande_unite_list' %}"
-            class="btn btn-outline-primary"
-        >
+.page-header p {
+    margin: 0;
+    opacity: .88;
+    font-size: 14px;
+}
 
-            <i class="bi bi-collection"></i>
+.header-actions {
+    position: relative;
+    z-index: 3;
+}
 
-            Grande unité
+/* =========================================================
+   BUTTONS
+========================================================= */
 
-        </a>
+.btn-modern {
+    border-radius: 12px;
+    padding: 11px 17px;
+    font-weight: 600;
+    transition: all .25s ease;
+}
 
+.btn-modern:hover {
+    transform: translateY(-2px);
+}
 
-        <!-- NOUVELLE MATIERE -->
+.btn-glass {
+    background: rgba(255,255,255,.13);
+    border: 1px solid rgba(255,255,255,.25);
+    color: white;
+    backdrop-filter: blur(10px);
+}
 
-        <a
-            href="{% url 'matiere_add' %}"
-            class="btn btn-primary"
-        >
+.btn-glass:hover {
+    background: rgba(255,255,255,.22);
+    color: white;
+}
 
-            <i class="bi bi-plus-circle"></i>
+/* =========================================================
+   STAT CARD
+========================================================= */
 
-            Nouvelle matière
+.stat-card {
+    position: relative;
+    overflow: hidden;
 
-        </a>
+    background: white;
 
-    </div>
+    border: 1px solid #edf0f5;
 
-</div>
+    border-radius: 20px;
 
-    <!-- STATISTIQUE -->
+    padding: 22px;
 
+    height: 100%;
 
-    <div class="row mb-4">
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.06);
 
+    transition: all .3s ease;
+}
 
-        <div class="col-md-4">
+.stat-card:hover {
+    transform: translateY(-5px);
 
+    box-shadow:
+        0 15px 35px rgba(15,23,42,.10);
+}
 
-            <div class="card shadow-sm border-0">
+.stat-card::after {
+    content: "";
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    right: -50px;
+    bottom: -55px;
+    background: rgba(13,110,253,.05);
+}
 
-                <div class="card-body">
+.stat-icon {
+    width: 55px;
+    height: 55px;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-                    <h6 class="text-muted">
-                        Matières disponibles
-                    </h6>
+    border-radius: 16px;
 
+    font-size: 25px;
 
-                    <h2 class="fw-bold text-primary">
+    margin-bottom: 16px;
+}
 
-                        {{ total_matieres }}
+.stat-label {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
 
+.stat-number {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.stat-description {
+    margin-top: 6px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+/* =========================================================
+   FILTER CARD
+========================================================= */
+
+.filter-card {
+    background: white;
+    border: 1px solid #edf0f5;
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.05);
+}
+
+.filter-title {
+    font-size: 16px;
+    font-weight: 750;
+    color: #1e293b;
+    margin-bottom: 18px;
+}
+
+.form-label-modern {
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 7px;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    z-index: 2;
+}
+
+.search-input {
+    padding-left: 43px !important;
+}
+
+.form-control-modern,
+.form-select-modern {
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    padding: 12px 14px;
+
+    background: #f8fafc;
+
+    font-size: 14px;
+
+    transition: all .25s ease;
+}
+
+.form-control-modern:focus,
+.form-select-modern:focus {
+
+    background: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+}
+
+/* =========================================================
+   FILIERE FILTER
+========================================================= */
+
+.filiere-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filiere-pill {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 9px 15px;
+
+    border-radius: 50px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    border: 1px solid #e2e8f0;
+
+    color: #475569;
+
+    background: #f8fafc;
+
+    transition: all .25s ease;
+}
+
+.filiere-pill:hover {
+
+    color: #2563eb;
+
+    border-color: #93c5fd;
+
+    background: #eff6ff;
+
+    transform: translateY(-2px);
+}
+
+.filiere-pill.active {
+
+    color: white;
+
+    border-color: transparent;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 6px 15px rgba(37,99,235,.20);
+}
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+
+.table-card {
+
+    background: white;
+
+    border: 1px solid #edf0f5;
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06);
+}
+
+.table-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.table-header h5 {
+
+    margin: 0;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    color: #1e293b;
+}
+
+.table-header p {
+
+    margin: 3px 0 0;
+
+    font-size: 12px;
+
+    color: #94a3b8;
+}
+
+.table-count {
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    padding: 7px 12px;
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.modern-table {
+
+    margin: 0;
+
+    min-width: 850px;
+}
+
+.modern-table thead th {
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    border: none;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    font-weight: 800;
+
+    padding: 15px 18px;
+}
+
+.modern-table tbody td {
+
+    padding: 16px 18px;
+
+    border-top: 1px solid #f1f5f9;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+}
+
+.modern-table tbody tr {
+
+    transition: all .2s ease;
+}
+
+.modern-table tbody tr:hover {
+
+    background: #f8fbff;
+
+}
+
+/* =========================================================
+   MATIERE
+========================================================= */
+
+.matiere-name {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    font-weight: 700;
+
+    color: #1e293b;
+}
+
+.matiere-icon {
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 17px;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.code-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 7px 11px;
+
+    border-radius: 9px;
+
+    background: #f1f5f9;
+
+    color: #475569;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.coeff-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 38px;
+
+    padding: 6px 9px;
+
+    border-radius: 9px;
+
+    background: #ecfeff;
+
+    color: #0891b2;
+
+    font-weight: 700;
+
+    font-size: 12px;
+}
+
+.volume-text {
+
+    color: #64748b;
+
+    font-weight: 600;
+}
+
+.filiere-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 7px 11px;
+
+    border-radius: 9px;
+
+    background: #ecfdf5;
+
+    color: #059669;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.action-buttons {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 6px;
+}
+
+.action-btn {
+
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    transition: all .2s ease;
+}
+
+.action-btn:hover {
+
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-state {
+
+    padding: 65px 20px;
+
+    text-align: center;
+}
+
+.empty-icon {
+
+    width: 75px;
+    height: 75px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 22px;
+
+    background: #f1f5f9;
+
+    color: #94a3b8;
+
+    font-size: 32px;
+}
+
+.empty-state h5 {
+
+    font-weight: 800;
+
+    color: #334155;
+}
+
+.empty-state p {
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination-wrapper {
+
+    display: flex;
+
+    justify-content: center;
+
+    margin-top: 25px;
+}
+
+.pagination {
+
+    gap: 5px;
+}
+
+.pagination .page-link {
+
+    border: none;
+
+    border-radius: 10px !important;
+
+    width: 38px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #475569;
+
+    font-weight: 600;
+
+    background: white;
+
+    box-shadow: 0 4px 12px rgba(15,23,42,.05);
+}
+
+.pagination .page-item.active .page-link {
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+
+    color: white;
+}
+
+.pagination .page-link:hover {
+
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .page-header {
+
+        padding: 24px;
+
+    }
+
+    .page-header h2 {
+
+        font-size: 23px;
+
+    }
+
+    .header-actions {
+
+        margin-top: 20px;
+
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .matiere-page {
+
+        padding: 5px 0 30px;
+
+    }
+
+    .page-header {
+
+        border-radius: 18px;
+
+    }
+
+    .header-actions {
+
+        width: 100%;
+
+    }
+
+    .header-actions .btn {
+
+        flex: 1;
+
+    }
+
+    .table-header {
+
+        padding: 18px;
+
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .page-header h2 {
+
+        font-size: 20px;
+
+    }
+
+    .page-header p {
+
+        font-size: 12px;
+
+    }
+
+    .header-actions {
+
+        flex-direction: column;
+
+    }
+
+    .header-actions .btn {
+
+        width: 100%;
+
+    }
+
+    .filter-card {
+
+        padding: 17px;
+
+    }
+
+    .table-header {
+
+        align-items: flex-start;
+
+        gap: 10px;
+
+        flex-direction: column;
+
+    }
+
+}
+
+</style>
+
+<div class="container-fluid matiere-page">
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<div class="page-header">
+
+<div class="page-header-content">
+
+    <div class="row align-items-center">
+
+        <div class="col-lg-7">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div
+                    class="rounded-4 d-flex align-items-center justify-content-center"
+                    style="
+                        width:58px;
+                        height:58px;
+                        background:rgba(255,255,255,.14);
+                        border:1px solid rgba(255,255,255,.20);
+                    "
+                >
+
+                    <i class="bi bi-journal-bookmark-fill fs-4"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>
+                        Gestion des matières BTS
                     </h2>
 
+                    <p>
+                        Gérez les matières, coefficients, volumes horaires
+                        et filières académiques.
+                    </p>
 
                 </div>
 
             </div>
 
-
         </div>
 
 
+        <div class="col-lg-5">
 
-    </div>
+            <div class="header-actions d-flex justify-content-lg-end gap-2">
 
+                <a
+                    href="{% url 'grande_unite_list' %}"
+                    class="btn btn-glass btn-modern"
+                >
 
+                    <i class="bi bi-collection me-1"></i>
 
-
-    <!-- FILTRE -->
-
-
-    <div class="card shadow-sm mb-4">
-
-
-        <div class="card-body">
-
-
-            <form method="GET" class="row g-3">
-
-
-                <div class="col-md-5">
-
-
-                    <input type="text" name="q" class="form-control" placeholder="🔎 Rechercher code ou matière"
-                        value="{{ request.GET.q }}">
-
-
-                </div>
-
-
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                
-                        <div class="d-flex flex-wrap gap-2">
-                
-                            <a href="{% url 'matiere_list' %}"
-                               class="btn {% if not filiere_selectionnee %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                                Toutes
-                            </a>
-                
-                            {% for f in filiere_list %}
-                
-                                <a href="?filiere_bts={{ f.id }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
-                                   class="btn {% if filiere_selectionnee|stringformat:'s' == f.id|stringformat:'s' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                
-                                    {{ f.nom }}
-                
-                                </a>
-                
-                            {% endfor %}
-                
-                        </div>
-                
-                    </div>
-                </div>
-
-
-
-                <div class="col-md-2">
-
-
-                    <button class="btn btn-dark w-100">
-
-                        Filtrer
-
-                    </button>
-
-
-                </div>
-
-
-
-            </form>
-
-
-        </div>
-
-
-    </div>
-
-
-
-
-
-    <!-- TABLE -->
-
-
-    <div class="card shadow-sm">
-
-
-        <div class="card-header bg-primary text-white">
-
-
-            <h5 class="mb-0">
-
-                📖 Liste des matières
-
-            </h5>
-
-
-        </div>
-
-
-
-        <div class="table-responsive">
-
-
-            <table class="table table-hover mb-0">
-
-
-                <thead class="table-light">
-
-
-                    <tr>
-
-                        <th>Code</th>
-
-                        <th>Matière</th>
-
-                        <th>Coefficient</th>
-
-                        <th>Volume</th>
-
-                        <th>Filière</th>
-
-                        <th width="150">
-                            Actions
-                        </th>
-
-
-                    </tr>
-
-
-                </thead>
-
-
-
-
-                <tbody>
-
-
-                    {% for m in page_obj %}
-
-
-                    <tr>
-
-
-                        <td>
-
-                            <span class="badge bg-secondary">
-
-                                {{m.code}}
-
-                            </span>
-
-                        </td>
-
-
-
-                        <td class="fw-semibold">
-
-                            {{m.libelle}}
-
-                        </td>
-
-
-
-                        <td>
-
-                            <span class="badge bg-info">
-
-                                {{m.coefficient}}
-
-                            </span>
-
-                        </td>
-
-
-
-                        <td>
-
-                            {{m.volume_horaire}} H
-
-                        </td>
-
-
-
-                        <td>
-
-                            {{m.filiere_bts.nom}}
-
-                        </td>
-
-
-
-
-                        <td>
-
-
-                            <a href="{% url 'matiere_edit' m.id %}" class="btn btn-warning btn-sm">
-
-                                ✏️
-
-                            </a>
-
-
-                            <a href="{% url 'matiere_delete' m.id %}" class="btn btn-danger btn-sm">
-
-                                🗑️
-
-                            </a>
-
-
-                        </td>
-
-
-
-                    </tr>
-
-
-
-                    {% empty %}
-
-
-                    <tr>
-
-                        <td colspan="6" class="text-center py-4">
-
-
-                            Aucune matière trouvée
-
-
-                        </td>
-
-
-                    </tr>
-
-
-
-                    {% endfor %}
-
-
-                </tbody>
-
-
-
-            </table>
-
-
-        </div>
-
-
-    </div>
-
-
-
-
-
-    <!-- PAGINATION -->
-
-
-    <nav class="mt-4">
-
-
-        <ul class="pagination justify-content-center">
-
-
-            {% if page_obj.has_previous %}
-
-
-            <li class="page-item">
-
-
-                <a class="page-link"
-                    href="?page={{page_obj.previous_page_number}}&q={{request.GET.q}}&filiere_bts={{request.GET.filiere_bts}}">
-
-                    ⬅
+                    Grandes unités
 
                 </a>
 
 
-            </li>
+                <a
+                    href="{% url 'matiere_add' %}"
+                    class="btn btn-light btn-modern"
+                >
 
+                    <i class="bi bi-plus-circle-fill me-1 text-primary"></i>
 
-            {% endif %}
-
-
-
-            <li class="page-item active">
-
-                <span class="page-link">
-
-                    {{page_obj.number}}
-                    /
-                    {{page_obj.paginator.num_pages}}
-
-                </span>
-
-
-            </li>
-
-
-
-
-            {% if page_obj.has_next %}
-
-
-            <li class="page-item">
-
-
-                <a class="page-link"
-                    href="?page={{page_obj.next_page_number}}&q={{request.GET.q}}&filiere_bts={{request.GET.filiere_bts}}">
-
-                    ➡
+                    Nouvelle matière
 
                 </a>
 
-            </li>
+            </div>
 
-            {% endif %}
+        </div>
 
-
-        </ul>
-
-    </nav>
+    </div>
 
 </div>
 
+</div>
+
+<!-- =========================================================
+     STATISTIQUE
+========================================================= -->
+
+<div class="row g-4 mb-4">
+
+<div class="col-xl-3 col-md-6">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-primary-subtle text-primary">
+
+            <i class="bi bi-journal-bookmark-fill"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Matières disponibles
+        </div>
+
+        <div class="stat-number">
+
+            {{ total_matieres|default:"0" }}
+
+        </div>
+
+        <div class="stat-description">
+
+            Matières enregistrées dans le système
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="col-xl-3 col-md-6">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-success-subtle text-success">
+
+            <i class="bi bi-mortarboard-fill"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Filières
+        </div>
+
+        <div class="stat-number">
+
+            {{ filiere_list|length }}
+
+        </div>
+
+        <div class="stat-description">
+
+            Filières BTS disponibles
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="col-xl-3 col-md-6">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-warning-subtle text-warning">
+
+            <i class="bi bi-diagram-3-fill"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Organisation
+        </div>
+
+        <div class="stat-number">
+
+            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+
+        </div>
+
+        <div class="stat-description">
+
+            Matières classées par filière
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="col-xl-3 col-md-6">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-info-subtle text-info">
+
+            <i class="bi bi-clock-history"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Suivi horaire
+        </div>
+
+        <div class="stat-number">
+
+            <i class="bi bi-bar-chart-fill text-info fs-4"></i>
+
+        </div>
+
+        <div class="stat-description">
+
+            Volumes horaires configurés
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     FILTRES
+========================================================= -->
+
+<div class="filter-card">
+
+<div class="filter-title">
+
+    <i class="bi bi-funnel-fill text-primary me-2"></i>
+
+    Rechercher et filtrer
+
+</div>
+
+
+<form method="GET">
+
+    <div class="row g-3 align-items-end">
+
+
+        <!-- RECHERCHE -->
+
+        <div class="col-lg-6">
+
+            <label class="form-label-modern">
+                Rechercher une matière
+            </label>
+
+            <div class="search-wrapper">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    name="q"
+                    class="form-control form-control-modern search-input"
+                    placeholder="Code ou nom de la matière..."
+                    value="{{ request.GET.q }}"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- FILIERE -->
+
+        <div class="col-lg-3">
+
+            <label class="form-label-modern">
+                Filière
+            </label>
+
+            <select
+                name="filiere_bts"
+                class="form-select form-select-modern"
+            >
+
+                <option value="">
+                    Toutes les filières
+                </option>
+
+                {% for f in filiere_list %}
+
+                    <option
+                        value="{{ f.id }}"
+                        {% if request.GET.filiere_bts == f.id|stringformat:'s' %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ f.nom }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- BOUTON -->
+
+        <div class="col-lg-3">
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-modern w-100"
+            >
+
+                <i class="bi bi-search me-2"></i>
+
+                Rechercher
+
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+<!-- FILIERES RAPIDES -->
+
+<div class="mt-4">
+
+    <div class="form-label-modern mb-2">
+
+        <i class="bi bi-mortarboard-fill me-1"></i>
+
+        Filtrer rapidement par filière
+
+    </div>
+
+
+    <div class="filiere-filter">
+
+        <a
+            href="{% url 'matiere_list' %}{% if request.GET.q %}?q={{ request.GET.q }}{% endif %}"
+            class="filiere-pill {% if not filiere_selectionnee %}active{% endif %}"
+        >
+
+            <i class="bi bi-grid-fill"></i>
+
+            Toutes
+
+        </a>
+
+
+        {% for f in filiere_list %}
+
+            <a
+                href="?filiere_bts={{ f.id }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                class="filiere-pill
+                {% if filiere_selectionnee|stringformat:'s' == f.id|stringformat:'s' %}
+                    active
+                {% endif %}"
+            >
+
+                <i class="bi bi-mortarboard-fill"></i>
+
+                {{ f.nom }}
+
+            </a>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     TABLEAU
+========================================================= -->
+
+<div class="table-card">
+
+<!-- TABLE HEADER -->
+
+<div class="table-header">
+
+    <div>
+
+        <h5>
+
+            <i class="bi bi-table text-primary me-2"></i>
+
+            Liste des matières
+
+        </h5>
+
+        <p>
+            Gestion des matières BTS
+        </p>
+
+    </div>
+
+
+    <div class="table-count">
+
+        <i class="bi bi-journal-text me-1"></i>
+
+        {{ total_matieres|default:"0" }} matière(s)
+
+    </div>
+
+</div>
+
+
+<!-- TABLE -->
+
+<div class="table-responsive">
+
+    <table class="table modern-table align-middle">
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Code
+                </th>
+
+                <th>
+                    Matière
+                </th>
+
+                <th>
+                    Coefficient
+                </th>
+
+                <th>
+                    Volume horaire
+                </th>
+
+                <th>
+                    Filière
+                </th>
+
+                <th class="text-end">
+                    Actions
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for m in page_obj %}
+
+            <tr>
+
+
+                <!-- CODE -->
+
+                <td>
+
+                    <span class="code-badge">
+
+                        <i class="bi bi-hash me-1"></i>
+
+                        {{ m.code }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- MATIERE -->
+
+                <td>
+
+                    <div class="matiere-name">
+
+                        <div class="matiere-icon">
+
+                            <i class="bi bi-book-half"></i>
+
+                        </div>
+
+                        <span>
+
+                            {{ m.libelle }}
+
+                        </span>
+
+                    </div>
+
+                </td>
+
+
+                <!-- COEFFICIENT -->
+
+                <td>
+
+                    <span class="coeff-badge">
+
+                        {{ m.coefficient }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- VOLUME -->
+
+                <td>
+
+                    <span class="volume-text">
+
+                        <i class="bi bi-clock me-1"></i>
+
+                        {{ m.volume_horaire }} H
+
+                    </span>
+
+                </td>
+
+
+                <!-- FILIERE -->
+
+                <td>
+
+                    {% if m.filiere_bts %}
+
+                        <span class="filiere-badge">
+
+                            <i class="bi bi-mortarboard-fill"></i>
+
+                            {{ m.filiere_bts.nom }}
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-secondary-subtle text-secondary">
+
+                            Non définie
+
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- ACTIONS -->
+
+                <td>
+
+                    <div class="action-buttons">
+
+
+                        <a
+                            href="{% url 'matiere_edit' m.id %}"
+                            class="btn btn-outline-warning action-btn"
+                            title="Modifier"
+                            data-bs-toggle="tooltip"
+                        >
+
+                            <i class="bi bi-pencil-fill"></i>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'matiere_delete' m.id %}"
+                            class="btn btn-outline-danger action-btn"
+                            title="Supprimer"
+                            data-bs-toggle="tooltip"
+                            onclick="return confirm('⚠️ Voulez-vous vraiment supprimer la matière « {{ m.libelle }} » ?');"
+                        >
+
+                            <i class="bi bi-trash3-fill"></i>
+
+                        </a>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="6">
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+
+                            <i class="bi bi-journal-x"></i>
+
+                        </div>
+
+                        <h5>
+                            Aucune matière trouvée
+                        </h5>
+
+                        <p>
+                            Aucune matière ne correspond aux critères sélectionnés.
+                        </p>
+
+                        <a
+                            href="{% url 'matiere_add' %}"
+                            class="btn btn-primary btn-modern"
+                        >
+
+                            <i class="bi bi-plus-circle me-1"></i>
+
+                            Ajouter une matière
+
+                        </a>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     PAGINATION
+========================================================= -->
+
+{% if page_obj.paginator.num_pages > 1 %}
+
+<div class="pagination-wrapper">
+
+<nav>
+
+    <ul class="pagination">
+
+
+        {% if page_obj.has_previous %}
+
+        <li class="page-item">
+
+            <a
+                class="page-link"
+                href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.filiere_bts %}&filiere_bts={{ request.GET.filiere_bts }}{% endif %}"
+                title="Page précédente"
+            >
+
+                <i class="bi bi-chevron-left"></i>
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        <li class="page-item active">
+
+            <span class="page-link">
+
+                {{ page_obj.number }}
+
+            </span>
+
+        </li>
+
+
+        {% if page_obj.has_next %}
+
+        <li class="page-item">
+
+            <a
+                class="page-link"
+                href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.filiere_bts %}&filiere_bts={{ request.GET.filiere_bts }}{% endif %}"
+                title="Page suivante"
+            >
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+    </ul>
+
+</nav>
+
+
+</div>
+
+{% endif %}
+
+</div>
+
+<!-- =========================================================
+     TOOLTIP
+========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const tooltipTriggerList =
+        document.querySelectorAll('[data-bs-toggle="tooltip"]');
+
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+
+        new bootstrap.Tooltip(tooltipTriggerEl);
+
+    });
+
+});
+
+</script>
 
 {% endblock %}

@@ -1,132 +1,1181 @@
 {% extends 'base.html' %}
 
-{% block title %}Liste des classes{% endblock %}
+{% block title %}Gestion des classes | Administration{% endblock %}
 
 {% block content %}
 
-<div class="container mt-4">
+<style>
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+.classes-page {
+    padding: 28px 0 60px;
+    background: #f8fafc;
+}
+
+.classes-page * {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER PREMIUM
+========================================================= */
+
+.classes-hero {
+    position: relative;
+    overflow: hidden;
+
+    padding: 32px;
+
+    border-radius: 26px;
+
+    margin-bottom: 25px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd 0%,
+            #6610f2 100%
+        );
+
+    box-shadow:
+        0 18px 45px rgba(13, 110, 253, .20);
+}
+
+.classes-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    border-radius: 50%;
+
+    right: -100px;
+    top: -160px;
+
+    background: rgba(255,255,255,.08);
+}
+
+.classes-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 200px;
+    height: 200px;
+
+    border-radius: 50%;
+
+    right: 25%;
+    bottom: -150px;
+
+    background: rgba(255,255,255,.06);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-icon {
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    margin-bottom: 15px;
+
+    background: rgba(255,255,255,.15);
+
+    border: 1px solid rgba(255,255,255,.20);
+
+    font-size: 24px;
+
+    backdrop-filter: blur(8px);
+}
+
+.hero-title {
+    font-size: 30px;
+    font-weight: 800;
+
+    margin-bottom: 7px;
+}
+
+.hero-subtitle {
+    margin: 0;
+
+    font-size: 14px;
+
+    color: rgba(255,255,255,.82);
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-bottom: 13px;
+
+    padding: 7px 13px;
+
+    border-radius: 30px;
+
+    background: rgba(255,255,255,.13);
+
+    border: 1px solid rgba(255,255,255,.16);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+
+/* =========================================================
+   BUTTON HEADER
+========================================================= */
+
+.btn-new-class {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 13px 19px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background: white;
+
+    color: #0d6efd;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.14);
+
+    transition: .25s ease;
+}
+
+.btn-new-class:hover {
+    color: #0d6efd;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 15px 30px rgba(0,0,0,.20);
+}
+
+
+/* =========================================================
+   STATISTIQUES
+========================================================= */
+
+.stats-row {
+    margin-bottom: 25px;
+}
+
+.stat-card-modern {
+    position: relative;
+
+    height: 100%;
+
+    padding: 21px;
+
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid #edf0f5;
+
+    border-radius: 19px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.055);
+
+    transition: .25s ease;
+}
+
+.stat-card-modern:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 16px 35px rgba(15,23,42,.10);
+}
+
+.stat-card-modern::after {
+    content: "";
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: -40px;
+    bottom: -40px;
+
+    border-radius: 50%;
+
+    background: rgba(13,110,253,.035);
+}
+
+.stat-top {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 16px;
+}
+
+.stat-icon-modern {
+    width: 47px;
+    height: 47px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 20px;
+}
+
+.stat-trend {
+    font-size: 11px;
+
+    font-weight: 700;
+
+    padding: 5px 8px;
+
+    border-radius: 20px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+}
+
+.stat-label-modern {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #64748b;
+
+    margin-bottom: 3px;
+}
+
+.stat-value-modern {
+    font-size: 29px;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   FILTRE
+========================================================= */
+
+.filter-card-modern {
+    background: white;
+
+    border: 1px solid #edf0f5;
+
+    border-radius: 21px;
+
+    padding: 22px;
+
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.05);
+}
+
+.filter-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    margin-bottom: 20px;
+}
+
+.filter-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.filter-title {
+    margin: 0;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    color: #1e293b;
+}
+
+.filter-subtitle {
+    display: block;
+
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    color: #94a3b8;
+}
+
+.form-label-modern {
+    display: block;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    color: #475569;
+
+    margin-bottom: 7px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .3px;
+}
+
+.input-modern {
+    width: 100%;
+
+    min-height: 46px;
+
+    padding: 10px 14px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    transition: .2s ease;
+}
+
+.input-modern:focus {
+    outline: none;
+
+    background: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+}
+
+.btn-search-modern {
+    min-height: 46px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 7px 18px rgba(13,110,253,.16);
+
+    transition: .2s ease;
+}
+
+.btn-search-modern:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 23px rgba(13,110,253,.22);
+}
+
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+
+.classes-table-card {
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid #edf0f5;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06);
+}
+
+.classes-table-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 23px;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.table-heading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.table-heading-icon {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 19px;
+}
+
+.table-heading h5 {
+    margin: 0;
+
+    font-weight: 800;
+
+    font-size: 16px;
+
+    color: #0f172a;
+}
+
+.table-heading small {
+    color: #94a3b8;
+
+    font-size: 11px;
+}
+
+.total-badge {
+    padding: 7px 12px;
+
+    border-radius: 30px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.modern-classes-table {
+    width: 100%;
+
+    margin: 0;
+}
+
+.modern-classes-table thead th {
+    padding: 14px 18px;
+
+    background: #f8fafc;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    color: #64748b;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .55px;
+
+    white-space: nowrap;
+}
+
+.modern-classes-table tbody td {
+    padding: 16px 18px;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+}
+
+.modern-classes-table tbody tr {
+    transition: .2s ease;
+}
+
+.modern-classes-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.modern-classes-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   CLASS
+========================================================= */
+
+.class-info {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+.class-avatar {
+    width: 39px;
+    height: 39px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: linear-gradient(
+        135deg,
+        #eff6ff,
+        #e0e7ff
+    );
+
+    color: #2563eb;
+
+    font-size: 17px;
+}
+
+.class-name-text {
+    font-weight: 750;
+
+    color: #0f172a;
+}
+
+.class-id {
+    display: block;
+
+    margin-top: 2px;
+
+    font-size: 10px;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.data-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 10px;
+
+    border-radius: 9px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.badge-room {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.badge-filiere {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.badge-level {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.badge-effectif {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.actions-wrapper {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 6px;
+}
+
+.class-action {
+    width: 35px;
+    height: 35px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    border: 1px solid;
+
+    transition: .2s ease;
+}
+
+.class-action:hover {
+    transform: translateY(-2px);
+}
+
+.action-edit {
+    background: #fffbeb;
+
+    color: #d97706;
+
+    border-color: #fde68a;
+}
+
+.action-edit:hover {
+    background: #f59e0b;
+
+    color: white;
+
+    border-color: #f59e0b;
+}
+
+.action-delete {
+    background: #fef2f2;
+
+    color: #dc2626;
+
+    border-color: #fecaca;
+}
+
+.action-delete:hover {
+    background: #dc2626;
+
+    color: white;
+
+    border-color: #dc2626;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+    padding: 65px 20px !important;
+
+    text-align: center;
+}
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 16px;
+
+    border-radius: 20px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 29px;
+}
+
+.empty-state h5 {
+    margin-bottom: 6px;
+
+    color: #334155;
+
+    font-weight: 800;
+}
+
+.empty-state p {
+    margin-bottom: 20px;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination-modern {
+    margin-top: 22px;
+}
+
+.pagination-modern .page-link {
+    min-width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 10px !important;
+
+    margin: 0 3px;
+
+    color: #475569;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    box-shadow: none;
+
+    transition: .2s ease;
+}
+
+.pagination-modern .page-link:hover {
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    border-color: #bfdbfe;
+}
+
+.pagination-modern .active .page-link {
+    background: #0d6efd;
+
+    color: white;
+
+    border-color: #0d6efd;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-content-modern {
+    overflow: hidden;
+
+    border: none;
+
+    border-radius: 23px;
+
+    box-shadow:
+        0 30px 80px rgba(15,23,42,.25);
+}
+
+.modal-header-modern {
+    position: relative;
+
+    padding: 26px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd,
+            #6610f2
+        );
+}
+
+.modal-header-modern::after {
+    content: "";
+
+    position: absolute;
+
+    width: 140px;
+    height: 140px;
+
+    border-radius: 50%;
+
+    right: -50px;
+    top: -80px;
+
+    background: rgba(255,255,255,.08);
+}
+
+.modal-icon-modern {
+    width: 47px;
+    height: 47px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 13px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.15);
+
+    font-size: 20px;
+}
+
+.modal-title-modern {
+    margin: 0 0 4px;
+
+    font-weight: 800;
+
+    font-size: 19px;
+}
+
+.modal-description {
+    margin: 0;
+
+    font-size: 12px;
+
+    color: rgba(255,255,255,.78);
+}
+
+.modal-body-modern {
+    padding: 26px;
+}
+
+.modal-group {
+    margin-bottom: 18px;
+}
+
+.modal-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #475569;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .3px;
+}
+
+.modal-group input,
+.modal-group select,
+.modal-group textarea {
+    width: 100%;
+
+    min-height: 45px;
+
+    padding: 10px 13px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 11px;
+
+    background: #f8fafc;
+
+    font-size: 13px;
+
+    transition: .2s ease;
+}
+
+.modal-group input:focus,
+.modal-group select:focus,
+.modal-group textarea:focus {
+    outline: none;
+
+    background: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+}
+
+.btn-save-modern {
+    min-height: 47px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #198754,
+            #20c997
+        );
+
+    color: white;
+
+    font-weight: 750;
+
+    box-shadow:
+        0 9px 20px rgba(25,135,84,.18);
+
+    transition: .2s ease;
+}
+
+.btn-save-modern:hover {
+    color: white;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 25px rgba(25,135,84,.25);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+
+    .classes-hero {
+        padding: 25px;
+    }
+
+    .hero-title {
+        font-size: 25px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .classes-page {
+        padding-top: 15px;
+    }
+
+    .classes-hero {
+        padding: 22px;
+
+        border-radius: 20px;
+    }
+
+    .hero-title {
+        font-size: 22px;
+    }
+
+    .hero-subtitle {
+        font-size: 13px;
+    }
+
+    .hero-layout {
+        flex-direction: column;
+
+        align-items: flex-start !important;
+    }
+
+    .btn-new-class {
+        width: 100%;
+
+        justify-content: center;
+    }
+
+    .classes-table-header {
+        padding: 17px;
+    }
+
+    .modern-classes-table thead th,
+    .modern-classes-table tbody td {
+        padding: 13px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .filter-card-modern {
+        padding: 17px;
+    }
+
+    .stat-card-modern {
+        padding: 18px;
+    }
+
+    .table-heading h5 {
+        font-size: 14px;
+    }
+
+    .total-badge {
+        display: none;
+    }
+
+    .modal-body-modern {
+        padding: 20px;
+    }
+
+}
+
+</style>
+
+<div class="container-fluid classes-page">
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<div class="classes-hero">
+
+
+<div class="hero-content">
+
+    <div class="d-flex justify-content-between align-items-center gap-4 hero-layout">
 
         <div>
-            <h2>🏫 Liste des classes</h2>
-            <small class="text-muted">
-                Gestion des classes, filières et niveaux
-            </small>
+
+            <div class="hero-badge">
+
+                <i class="bi bi-grid-1x2-fill"></i>
+
+                Administration BTS
+
+            </div>
+
+            <div class="hero-icon">
+
+                <i class="bi bi-building-fill"></i>
+
+            </div>
+
+            <h1 class="hero-title">
+                Gestion des classes
+            </h1>
+
+            <p class="hero-subtitle">
+                Gérez facilement les classes, salles, filières,
+                niveaux et effectifs de votre établissement.
+            </p>
+
         </div>
 
-        <!-- BUTTON MODAL -->
-        <button type="button"
-                class="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#classeModal">
-            ➕ Ajouter une classe
+
+        <button
+            type="button"
+            class="btn-new-class"
+            data-bs-toggle="modal"
+            data-bs-target="#classeModal"
+        >
+
+            <i class="bi bi-plus-circle-fill"></i>
+
+            Nouvelle classe
+
         </button>
 
     </div>
 
-    <!-- FILTER -->
-    <form method="GET" class="row g-2 mb-3">
+</div>
 
-        <div class="col-md-4">
-            <input type="text" name="q" class="form-control"
-                   placeholder="🔎 Rechercher"
-                   value="{{ request.GET.q }}">
+
+</div>
+
+<!-- =========================================================
+     STATISTIQUES
+========================================================= -->
+
+<div class="row g-3 stats-row">
+
+
+<!-- CLASSES -->
+
+<div class="col-xl-3 col-md-6">
+
+    <div class="stat-card-modern">
+
+        <div class="stat-top">
+
+            <div class="stat-icon-modern bg-primary-subtle text-primary">
+
+                <i class="bi bi-building-fill"></i>
+
+            </div>
+
+            <span class="stat-trend">
+
+                <i class="bi bi-check-circle-fill me-1"></i>
+
+                Actives
+
+            </span>
+
         </div>
 
-        <div class="col-md-4">
-            <input type="text" name="filiere" class="form-control"
-                   placeholder="🎯 Filière"
-                   value="{{ request.GET.filiere }}">
+        <div class="stat-label-modern">
+            Classes enregistrées
         </div>
 
-        <div class="col-md-3">
-            <input type="text" name="niveau" class="form-control"
-                   placeholder="📘 Niveau"
-                   value="{{ request.GET.niveau }}">
-        </div>
+        <div class="stat-value-modern">
 
-        <div class="col-md-1">
-            <button class="btn btn-dark w-100">OK</button>
-        </div>
-
-    </form>
-
-    <!-- TABLE -->
-    <div class="card shadow-sm border-0">
-
-        <div class="card-body p-0">
-
-            <table class="table table-hover mb-0 align-middle">
-
-                <thead class="table-dark">
-                    <tr>
-                        <!-- <th>Classe</th> -->
-                        <th>Salle</th>
-                        <th>Filière</th>
-                        <th>Niveau</th>
-                        <th>Effectif</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    {% for c in page_obj %}
-
-                        <tr>
-
-                            <!-- <td>
-                                <strong>{{ c.nom }}</strong>
-                            </td> -->
-
-                            <!-- ✅ SALLE CORRIGÉE -->
-                            <td>
-                                {{ c.salle.nom|default:"Non affectée" }}
-                            </td>
-
-                            <td> {{c.filiere_bts.nom|default:"Sans filière" }}</td>
-
-                            <td>{{ c.niveau.nom }}</td>
-
-                            <!-- ✅ EFFECTIF PROPRE -->
-                            <td>
-                                <span class="badge bg-info text-dark">
-                                    {{ c.effectif }}
-                                </span>
-                            </td>
-
-                            <td class="text-center">
-
-                                <a href="{% url 'classe_edit' c.id %}"
-                                   class="btn btn-warning btn-sm">
-                                    ✏️
-                                </a>
-
-                                <a href="{% url 'classe_delete' c.id %}"
-                                   class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Supprimer ?')">
-                                    🗑️
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                    {% empty %}
-
-                        <tr>
-                            <td colspan="6" class="text-center p-4 text-muted">
-                                Aucune classe
-                            </td>
-                        </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
+            {{ page_obj.paginator.count }}
 
         </div>
 
@@ -134,57 +1183,744 @@
 
 </div>
 
-<!-- ===================== -->
-<!-- MODAL CREATE -->
-<!-- ===================== -->
-<div class="modal fade" id="classeModal" tabindex="-1">
 
-    <div class="modal-dialog modal-dialog-centered">
+<!-- FILIERES -->
 
-        <div class="modal-content border-0 shadow-lg rounded-4">
+<div class="col-xl-3 col-md-6">
 
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">🏫 Nouvelle classe</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
+    <div class="stat-card-modern">
 
-            <div class="modal-body p-4">
+        <div class="stat-top">
 
-                <form method="POST">
-                    {% csrf_token %}
-                
-                    <div class="mb-3">
-                        <label>Nom</label>
-                        {{ form.nom }}
-                    </div>
-                
-                    <div class="mb-3">
-                        <label>Filière BTS</label>
-                        {{ form.filiere_bts }}  <!-- ✅ ICI -->
-                
-                    </div>
-                
-                    <div class="mb-3">
-                        <label>Niveau</label>
-                        {{ form.niveau }}
-                    </div>
-                
-                    <div class="mb-3">
-                        <label>Salle</label>
-                        {{ form.salle }}
-                    </div>
-                
-                    <button type="submit" class="btn btn-success w-100">
-                        💾 Enregistrer
-                    </button>
-                
-                </form>
+            <div class="stat-icon-modern bg-success-subtle text-success">
+
+                <i class="bi bi-mortarboard-fill"></i>
 
             </div>
+
+            <span class="stat-trend">
+                BTS
+            </span>
+
+        </div>
+
+        <div class="stat-label-modern">
+            Filières
+        </div>
+
+        <div class="stat-value-modern">
+
+            {{ filieres_count|default:"0" }}
 
         </div>
 
     </div>
+
+</div>
+
+
+<!-- SALLES -->
+
+<div class="col-xl-3 col-md-6">
+
+    <div class="stat-card-modern">
+
+        <div class="stat-top">
+
+            <div class="stat-icon-modern bg-warning-subtle text-warning">
+
+                <i class="bi bi-door-open-fill"></i>
+
+            </div>
+
+            <span class="stat-trend">
+                Disponibles
+            </span>
+
+        </div>
+
+        <div class="stat-label-modern">
+            Salles
+        </div>
+
+        <div class="stat-value-modern">
+
+            {{ salles_count|default:"0" }}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- EFFECTIF -->
+
+<div class="col-xl-3 col-md-6">
+
+    <div class="stat-card-modern">
+
+        <div class="stat-top">
+
+            <div class="stat-icon-modern bg-info-subtle text-info">
+
+                <i class="bi bi-people-fill"></i>
+
+            </div>
+
+            <span class="stat-trend">
+                Étudiants
+            </span>
+
+        </div>
+
+        <div class="stat-label-modern">
+            Effectif total
+        </div>
+
+        <div class="stat-value-modern">
+
+            {{ effectif_total|default:"0" }}
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     FILTRES
+========================================================= -->
+
+<div class="filter-card-modern">
+
+<div class="filter-header">
+
+    <div class="filter-icon">
+
+        <i class="bi bi-funnel-fill"></i>
+
+    </div>
+
+    <div>
+
+        <h5 class="filter-title">
+            Rechercher une classe
+        </h5>
+
+        <small class="filter-subtitle">
+            Utilisez les critères ci-dessous pour filtrer les résultats.
+        </small>
+
+    </div>
+
+</div>
+
+
+<form method="GET">
+
+    <div class="row g-3 align-items-end">
+
+
+        <!-- RECHERCHE -->
+
+        <div class="col-xl-4 col-md-6">
+
+            <label class="form-label-modern">
+                Recherche
+            </label>
+
+            <input
+                type="text"
+                name="q"
+                class="input-modern"
+                placeholder="Nom de classe..."
+                value="{{ request.GET.q }}"
+            >
+
+        </div>
+
+
+        <!-- FILIERE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <label class="form-label-modern">
+                Filière
+            </label>
+
+            <input
+                type="text"
+                name="filiere"
+                class="input-modern"
+                placeholder="Ex : Informatique..."
+                value="{{ request.GET.filiere }}"
+            >
+
+        </div>
+
+
+        <!-- NIVEAU -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <label class="form-label-modern">
+                Niveau
+            </label>
+
+            <input
+                type="text"
+                name="niveau"
+                class="input-modern"
+                placeholder="Ex : BTS 1..."
+                value="{{ request.GET.niveau }}"
+            >
+
+        </div>
+
+
+        <!-- BUTTON -->
+
+        <div class="col-xl-2 col-md-6">
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-search-modern w-100"
+            >
+
+                <i class="bi bi-search me-2"></i>
+
+                Rechercher
+
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+</div>
+
+<!-- =========================================================
+     TABLE
+========================================================= -->
+
+<div class="classes-table-card">
+
+
+<!-- HEADER -->
+
+<div class="classes-table-header">
+
+    <div class="table-heading">
+
+        <div class="table-heading-icon">
+
+            <i class="bi bi-list-ul"></i>
+
+        </div>
+
+        <div>
+
+            <h5>
+                Liste des classes
+            </h5>
+
+            <small>
+                Classes enregistrées dans le système
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <span class="total-badge">
+
+        <i class="bi bi-collection me-1"></i>
+
+        {{ page_obj.paginator.count }}
+        classe{{ page_obj.paginator.count|pluralize }}
+
+    </span>
+
+</div>
+
+
+
+<!-- TABLE -->
+
+<div class="table-responsive">
+
+    <table class="table modern-classes-table align-middle">
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Classe
+                </th>
+
+                <th>
+                    Salle
+                </th>
+
+                <th>
+                    Filière
+                </th>
+
+                <th>
+                    Niveau
+                </th>
+
+                <th>
+                    Effectif
+                </th>
+
+                <th class="text-center">
+                    Actions
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+            {% for c in page_obj %}
+
+            <tr>
+
+
+                <!-- CLASSE -->
+
+                <td>
+
+                    <div class="class-info">
+
+                        <div class="class-avatar">
+
+                            <i class="bi bi-building"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div class="class-name-text">
+
+                                {{ c.nom|default:"Classe" }}
+
+                            </div>
+
+                            <span class="class-id">
+
+                                Classe #{{ c.id }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+                <!-- SALLE -->
+
+                <td>
+
+                    <span class="data-badge badge-room">
+
+                        <i class="bi bi-door-open"></i>
+
+                        {{ c.salle.nom|default:"Non affectée" }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- FILIERE -->
+
+                <td>
+
+                    {% if c.filiere_bts %}
+
+                        <span class="data-badge badge-filiere">
+
+                            <i class="bi bi-mortarboard-fill"></i>
+
+                            {{ c.filiere_bts.nom }}
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="text-muted small">
+
+                            <i class="bi bi-dash-circle me-1"></i>
+
+                            Sans filière
+
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- NIVEAU -->
+
+                <td>
+
+                    <span class="data-badge badge-level">
+
+                        <i class="bi bi-layers-fill"></i>
+
+                        {{ c.niveau.nom|default:"Non défini" }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- EFFECTIF -->
+
+                <td>
+
+                    <span class="data-badge badge-effectif">
+
+                        <i class="bi bi-people-fill"></i>
+
+                        {{ c.effectif }}
+
+                        étudiant{{ c.effectif|pluralize }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- ACTIONS -->
+
+                <td>
+
+                    <div class="actions-wrapper">
+
+                        <a
+                            href="{% url 'classe_edit' c.id %}"
+                            class="class-action action-edit"
+                            title="Modifier la classe"
+                        >
+
+                            <i class="bi bi-pencil-fill"></i>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'classe_delete' c.id %}"
+                            class="class-action action-delete"
+                            title="Supprimer la classe"
+                            onclick="return confirm('Voulez-vous vraiment supprimer cette classe ?');"
+                        >
+
+                            <i class="bi bi-trash3-fill"></i>
+
+                        </a>
+
+                    </div>
+
+                </td>
+
+
+            </tr>
+
+
+            {% empty %}
+
+
+            <tr>
+
+                <td colspan="6" class="empty-state">
+
+                    <div class="empty-icon">
+
+                        <i class="bi bi-building-x"></i>
+
+                    </div>
+
+                    <h5>
+                        Aucune classe trouvée
+                    </h5>
+
+                    <p>
+                        Aucune classe ne correspond aux critères de recherche.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary rounded-pill px-4"
+                        data-bs-toggle="modal"
+                        data-bs-target="#classeModal"
+                    >
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Créer une classe
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+
+            {% endfor %}
+
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+</div>
+
+<!-- =========================================================
+     PAGINATION
+========================================================= -->
+
+{% if page_obj.paginator.num_pages > 1 %}
+
+<nav class="pagination-modern">
+
+<ul class="pagination justify-content-center mb-0">
+
+
+    {% if page_obj.has_previous %}
+
+    <li class="page-item">
+
+        <a
+            class="page-link"
+            href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&filiere={{ request.GET.filiere }}&niveau={{ request.GET.niveau }}"
+            title="Page précédente"
+        >
+
+            <i class="bi bi-chevron-left"></i>
+
+        </a>
+
+    </li>
+
+    {% endif %}
+
+
+    <li class="page-item active">
+
+        <span class="page-link">
+
+            {{ page_obj.number }}
+
+            <span class="opacity-75">
+                / {{ page_obj.paginator.num_pages }}
+            </span>
+
+        </span>
+
+    </li>
+
+
+    {% if page_obj.has_next %}
+
+    <li class="page-item">
+
+        <a
+            class="page-link"
+            href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&filiere={{ request.GET.filiere }}&niveau={{ request.GET.niveau }}"
+            title="Page suivante"
+        >
+
+            <i class="bi bi-chevron-right"></i>
+
+        </a>
+
+    </li>
+
+    {% endif %}
+
+
+</ul>
+
+</nav>
+
+{% endif %}
+
+</div>
+
+<!-- =========================================================
+     MODAL : NOUVELLE CLASSE
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="classeModal"
+    tabindex="-1"
+    aria-labelledby="classeModalLabel"
+    aria-hidden="true"
+>
+
+<div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content modal-content-modern">
+
+
+        <!-- HEADER MODAL -->
+
+        <div class="modal-header-modern">
+
+            <button
+                type="button"
+                class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                data-bs-dismiss="modal"
+                aria-label="Fermer"
+            ></button>
+
+
+            <div class="modal-icon-modern">
+
+                <i class="bi bi-building-add"></i>
+
+            </div>
+
+
+            <h5
+                id="classeModalLabel"
+                class="modal-title-modern"
+            >
+
+                Nouvelle classe
+
+            </h5>
+
+
+            <p class="modal-description">
+
+                Ajoutez une nouvelle classe à votre établissement.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- BODY MODAL -->
+
+        <div class="modal-body-modern">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- NOM -->
+
+                <div class="modal-group">
+
+                    <label>
+
+                        <i class="bi bi-tag-fill me-1"></i>
+
+                        Nom de la classe
+
+                    </label>
+
+                    {{ form.nom }}
+
+                </div>
+
+
+                <!-- FILIERE -->
+
+                <div class="modal-group">
+
+                    <label>
+
+                        <i class="bi bi-mortarboard-fill me-1"></i>
+
+                        Filière BTS
+
+                    </label>
+
+                    {{ form.filiere_bts }}
+
+                </div>
+
+
+                <!-- NIVEAU -->
+
+                <div class="modal-group">
+
+                    <label>
+
+                        <i class="bi bi-layers-fill me-1"></i>
+
+                        Niveau
+
+                    </label>
+
+                    {{ form.niveau }}
+
+                </div>
+
+
+                <!-- SALLE -->
+
+                <div class="modal-group">
+
+                    <label>
+
+                        <i class="bi bi-door-open-fill me-1"></i>
+
+                        Salle
+
+                    </label>
+
+                    {{ form.salle }}
+
+                </div>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="btn btn-save-modern w-100"
+                >
+
+                    <i class="bi bi-check-circle-fill me-2"></i>
+
+                    Enregistrer la classe
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 </div>
 

@@ -1,193 +1,1066 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Gestion des notes BTS
+{% endblock %}
+
 {% block content %}
 
-<div class="container-fluid mt-4">
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+.notes-page {
+    padding: 10px 5px 40px;
+}
 
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+/* =========================================================
+   HEADER
+========================================================= */
 
-        <h2>
-            <i class="bi bi-journal-text"></i>
-            Notes des étudiants
-        </h2>
+.notes-header {
+    position: relative;
+    overflow: hidden;
+    padding: 28px 30px;
+    border-radius: 24px;
+    margin-bottom: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd 0%,
+            #2563eb 45%,
+            #6610f2 100%
+        );
+
+    color: white;
+
+    box-shadow:
+        0 15px 35px rgba(13, 110, 253, .20);
+}
+
+.notes-header::before {
+    content: "";
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    right: -70px;
+    top: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.08);
+}
+
+.notes-header::after {
+    content: "";
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    right: 180px;
+    bottom: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.06);
+}
+
+.notes-header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.notes-header h2 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.notes-header p {
+    margin: 0;
+    opacity: .88;
+    font-size: 14px;
+}
 
 
-        <a href="{% url 'note_add' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i>
-            Ajouter note
-        </a>
+/* =========================================================
+   HEADER BUTTON
+========================================================= */
+
+.btn-add-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 12px 18px;
+
+    border-radius: 12px;
+
+    background: white;
+    color: #2563eb;
+
+    font-weight: 700;
+
+    border: none;
+
+    transition: all .25s ease;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.12);
+}
+
+.btn-add-note:hover {
+    transform: translateY(-3px);
+    background: #f8fafc;
+    color: #1d4ed8;
+}
+
+
+/* =========================================================
+   MINI STATS
+========================================================= */
+
+.notes-stats {
+    margin-bottom: 25px;
+}
+
+.note-stat-card {
+    position: relative;
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid #edf0f4;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    height: 100%;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.06);
+
+    transition: all .3s ease;
+}
+
+.note-stat-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 15px 35px rgba(15,23,42,.10);
+}
+
+.note-stat-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 21px;
+
+    margin-bottom: 13px;
+}
+
+.note-stat-label {
+    color: #64748b;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+.note-stat-number {
+    font-size: 27px;
+
+    font-weight: 800;
+
+    color: #0f172a;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   FILTER CARD
+========================================================= */
+
+.filter-card {
+    background: white;
+
+    border: 1px solid #edf0f4;
+
+    border-radius: 20px;
+
+    padding: 24px;
+
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.05);
+}
+
+.filter-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.filter-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 18px;
+}
+
+.filter-header h5 {
+    margin: 0;
+
+    font-weight: 800;
+
+    color: #0f172a;
+}
+
+.filter-header small {
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.filter-label {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #475569;
+
+    margin-bottom: 8px;
+}
+
+.modern-select,
+.modern-input {
+    height: 46px;
+
+    border-radius: 12px;
+
+    border: 1px solid #e2e8f0;
+
+    background: #f8fafc;
+
+    padding: 0 14px;
+
+    font-size: 14px;
+
+    transition: all .2s ease;
+}
+
+.modern-select:focus,
+.modern-input:focus {
+    background: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+
+    outline: none;
+}
+
+.btn-filter {
+    height: 46px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #06b6d4
+        );
+
+    color: white;
+
+    font-weight: 700;
+
+    transition: all .25s ease;
+
+    box-shadow:
+        0 8px 18px rgba(37,99,235,.18);
+}
+
+.btn-filter:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 25px rgba(37,99,235,.25);
+}
+
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+
+.notes-table-card {
+    background: white;
+
+    border-radius: 20px;
+
+    border: 1px solid #edf0f4;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06);
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.table-card-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.table-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.table-title-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.table-title h5 {
+    margin: 0;
+
+    font-weight: 800;
+
+    color: #0f172a;
+}
+
+.table-title small {
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.notes-table {
+    margin: 0;
+
+    border-collapse: separate;
+
+    border-spacing: 0;
+}
+
+.notes-table thead th {
+    background: #f8fafc;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    padding: 15px 16px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    white-space: nowrap;
+}
+
+.notes-table tbody td {
+    padding: 17px 16px;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    vertical-align: middle;
+}
+
+.notes-table tbody tr {
+    transition: all .2s ease;
+}
+
+.notes-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.notes-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   STUDENT
+========================================================= */
+
+.student-info {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+.student-avatar {
+    width: 38px;
+    height: 38px;
+
+    min-width: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dbeafe,
+            #e0e7ff
+        );
+
+    color: #2563eb;
+
+    font-size: 16px;
+
+    font-weight: 800;
+}
+
+.student-name {
+    font-weight: 700;
+
+    color: #1e293b;
+}
+
+.student-label {
+    color: #94a3b8;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MATIERE
+========================================================= */
+
+.matiere-name {
+    font-weight: 600;
+
+    color: #334155;
+}
+
+
+/* =========================================================
+   NOTE BADGE
+========================================================= */
+
+.note-value {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 48px;
+
+    padding: 6px 9px;
+
+    border-radius: 9px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    font-weight: 700;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   MOYENNE
+========================================================= */
+
+.average-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    min-width: 72px;
+
+    justify-content: center;
+
+    padding: 7px 11px;
+
+    border-radius: 10px;
+
+    font-weight: 800;
+
+    font-size: 13px;
+}
+
+.average-success {
+    background: #dcfce7;
+
+    color: #15803d;
+
+    border: 1px solid #bbf7d0;
+}
+
+.average-danger {
+    background: #fee2e2;
+
+    color: #dc2626;
+
+    border: 1px solid #fecaca;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.action-buttons {
+    display: flex;
+
+    gap: 7px;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    transition: all .2s ease;
+}
+
+.action-edit {
+    color: #d97706;
+
+    background: #fff7ed;
+
+    border: 1px solid #fed7aa;
+}
+
+.action-edit:hover {
+    background: #f59e0b;
+
+    color: white;
+
+    transform: translateY(-2px);
+}
+
+.action-delete {
+    color: #dc2626;
+
+    background: #fef2f2;
+
+    border: 1px solid #fecaca;
+}
+
+.action-delete:hover {
+    background: #dc2626;
+
+    color: white;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-state {
+    padding: 65px 20px;
+
+    text-align: center;
+}
+
+.empty-icon {
+    width: 75px;
+    height: 75px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: auto;
+
+    border-radius: 22px;
+
+    background: #f1f5f9;
+
+    color: #94a3b8;
+
+    font-size: 30px;
+}
+
+.empty-state h5 {
+    margin-top: 18px;
+
+    font-weight: 800;
+
+    color: #334155;
+}
+
+.empty-state p {
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination-wrapper {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 22px;
+
+    padding: 0 5px;
+}
+
+.pagination-info {
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+.pagination {
+    margin: 0;
+}
+
+.page-link {
+    border: none;
+
+    margin: 0 3px;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px !important;
+
+    color: #475569;
+
+    background: white;
+
+    box-shadow:
+        0 3px 10px rgba(15,23,42,.06);
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.page-link:hover {
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.page-item.active .page-link {
+    background: #2563eb;
+
+    color: white;
+
+    box-shadow:
+        0 6px 15px rgba(37,99,235,.25);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+
+    .notes-header {
+        padding: 25px;
+    }
+
+    .notes-header h2 {
+        font-size: 23px;
+    }
+
+    .btn-add-note {
+        margin-top: 15px;
+    }
+
+    .table-card-header {
+        padding: 18px;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .notes-page {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .notes-header {
+        border-radius: 18px;
+    }
+
+    .filter-card {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .notes-table-card {
+        border-radius: 18px;
+    }
+
+    .pagination-wrapper {
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+    .table-card-header {
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .notes-header h2 {
+        font-size: 21px;
+    }
+
+    .notes-header p {
+        font-size: 13px;
+    }
+
+    .btn-add-note {
+        width: 100%;
+
+        justify-content: center;
+    }
+
+    .table-card-header {
+        flex-direction: column;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+
+        justify-content: center;
+    }
+
+}
+
+</style>
+
+<div class="container-fluid notes-page">
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<div class="notes-header">
+
+    <div class="notes-header-content">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-8">
+
+                <h2>
+
+                    <i class="bi bi-journal-check me-2"></i>
+
+                    Gestion des notes
+
+                </h2>
+
+                <p>
+
+                    Consultez, filtrez et gérez les résultats
+                    académiques des étudiants BTS.
+
+                </p>
+
+            </div>
+
+
+            <div class="col-lg-4 text-lg-end">
+
+                <a
+                    href="{% url 'note_add' %}"
+                    class="btn-add-note"
+                >
+
+                    <i class="bi bi-plus-circle-fill"></i>
+
+                    Ajouter une note
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     STATISTIQUES
+====================================================== -->
+
+<div class="row g-3 notes-stats">
+
+
+    <!-- TOTAL NOTES -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="note-stat-card">
+
+            <div class="note-stat-icon bg-primary-subtle text-primary">
+
+                <i class="bi bi-journal-text"></i>
+
+            </div>
+
+            <div class="note-stat-label">
+                Notes enregistrées
+            </div>
+
+            <div class="note-stat-number">
+
+                {{ page_obj.paginator.count|default:"0" }}
+
+            </div>
+
+        </div>
 
     </div>
 
 
+    <!-- ETUDIANTS -->
 
-    <!-- FILTRES -->
+    <div class="col-xl-3 col-md-6">
 
-    <div class="card shadow-sm mb-4">
+        <div class="note-stat-card">
 
-        <div class="card-body">
+            <div class="note-stat-icon bg-success-subtle text-success">
 
+                <i class="bi bi-people-fill"></i>
 
-            <form method="GET">
+            </div>
 
-                <div class="row g-3">
+            <div class="note-stat-label">
+                Étudiants
+            </div>
 
+            <div class="note-stat-number">
 
-                    <!-- ETUDIANT -->
+                {{ etudiants|length }}
 
-                    <div class="col-md-4">
+            </div>
 
-                        <label class="form-label fw-bold">
-                            Étudiant
-                        </label>
+        </div>
 
+    </div>
 
-                        <select name="etudiant" class="form-select">
 
+    <!-- MATIERES -->
 
-                            <option value="">
-                                Tous les étudiants
-                            </option>
+    <div class="col-xl-3 col-md-6">
 
+        <div class="note-stat-card">
 
-                            {% for e in etudiants %}
+            <div class="note-stat-icon bg-warning-subtle text-warning">
 
-                            <option value="{{ e.id }}"
-                            {% if request.GET.etudiant == e.id|stringformat:"s" %}
-                                selected
-                            {% endif %}
-                            >
+                <i class="bi bi-book-fill"></i>
 
-                                {{ e.nom }} {{ e.prenoms }}
+            </div>
 
-                            </option>
+            <div class="note-stat-label">
+                Matières
+            </div>
 
-                            {% endfor %}
+            <div class="note-stat-number">
 
+                {{ matieres|length }}
 
-                        </select>
+            </div>
 
+        </div>
 
-                    </div>
+    </div>
 
 
+    <!-- SEMESTRE -->
 
+    <div class="col-xl-3 col-md-6">
 
+        <div class="note-stat-card">
 
-                    <!-- MATIERE -->
+            <div class="note-stat-icon bg-info-subtle text-info">
 
-                    <div class="col-md-4">
+                <i class="bi bi-calendar3"></i>
 
+            </div>
 
-                        <label class="form-label fw-bold">
-                            Matière
-                        </label>
+            <div class="note-stat-label">
+                Période
+            </div>
 
+            <div class="note-stat-number" style="font-size:20px;">
 
-                        <select name="matiere" class="form-select">
+                {% if request.GET.semestre == "1" %}
 
+                    Semestre 1
 
-                            <option value="">
-                                Toutes les matières
-                            </option>
+                {% elif request.GET.semestre == "2" %}
 
+                    Semestre 2
 
-                            {% for m in matieres %}
+                {% else %}
 
+                    Tous
 
-                            <option value="{{ m.id }}"
-                            {% if request.GET.matiere == m.id|stringformat:"s" %}
-                                selected
-                            {% endif %}
-                            >
+                {% endif %}
 
-                                {{ m.libelle }}
+            </div>
 
-                            </option>
+        </div>
 
+    </div>
 
-                            {% endfor %}
 
+</div>
 
-                        </select>
 
 
-                    </div>
+<!-- =====================================================
+     FILTRES
+====================================================== -->
 
+<div class="filter-card">
 
 
+    <div class="filter-header">
 
+        <div class="filter-icon">
 
-                    <!-- SEMESTRE -->
+            <i class="bi bi-funnel-fill"></i>
 
-                    <div class="col-md-2">
+        </div>
 
+        <div>
 
-                        <label class="form-label fw-bold">
-                            Semestre
-                        </label>
+            <h5>
+                Filtrer les notes
+            </h5>
 
-
-                        <select name="semestre" class="form-select">
-
-
-                            <option value="">
-                                Tous
-                            </option>
-
-
-                            <option value="1"
-                            {% if request.GET.semestre == "1" %}
-                                selected
-                            {% endif %}
-                            >
-
-                                Semestre 1
-
-                            </option>
-
-
-
-                            <option value="2"
-                            {% if request.GET.semestre == "2" %}
-                                selected
-                            {% endif %}
-                            >
-
-                                Semestre 2
-
-                            </option>
-
-
-                        </select>
-
-
-                    </div>
-
-
-
-
-
-                    <div class="col-md-2 d-flex align-items-end">
-
-
-                        <button class="btn btn-primary w-100">
-
-                            <i class="bi bi-search"></i>
-                            Filtrer
-
-                        </button>
-
-
-                    </div>
-
-
-                </div>
-
-
-            </form>
-
+            <small>
+                Affinez votre recherche par étudiant, matière ou semestre
+            </small>
 
         </div>
 
@@ -195,188 +1068,156 @@
 
 
 
+    <form method="GET">
 
 
-
-    <!-- TABLE -->
-
-    <div class="card shadow">
+        <div class="row g-3">
 
 
-        <div class="card-body p-0">
+            <!-- ETUDIANT -->
 
+            <div class="col-lg-4 col-md-6">
 
-            <div class="table-responsive">
+                <label class="filter-label">
+                    <i class="bi bi-person me-1"></i>
+                    Étudiant
+                </label>
 
+                <select
+                    name="etudiant"
+                    class="form-select modern-select"
+                >
 
-            <table class="table table-hover table-bordered mb-0">
+                    <option value="">
+                        Tous les étudiants
+                    </option>
 
+                    {% for e in etudiants %}
 
-                <thead class="table-dark">
-
-
-                    <tr>
-
-                        <th>
-                            Étudiant
-                        </th>
-
-
-                        <th>
-                            Matière
-                        </th>
-
-
-                        <th>
-                            CC
-                        </th>
-
-
-                        <th>
-                            Devoir
-                        </th>
-
-
-                        <th>
-                            Examen
-                        </th>
-
-
-                        <th>
-                            Moyenne
-                        </th>
-
-
-                        <th>
-                            Actions
-                        </th>
-
-
-                    </tr>
-
-
-                </thead>
-
-
-
-                <tbody>
-
-
-                {% for n in notes %}
-
-
-                <tr>
-
-
-                    <td>
-                        {{ n.etudiant.nom }}
-                        {{ n.etudiant.prenoms }}
-                    </td>
-
-
-
-                    <td>
-                        {{ n.matiere.libelle }}
-                    </td>
-
-
-
-                    <td>
-                        {{ n.cc }}
-                    </td>
-
-
-
-                    <td>
-                        {{ n.devoir }}
-                    </td>
-
-
-
-                    <td>
-                        {{ n.examen }}
-                    </td>
-
-
-
-                    <td>
-
-
-                        {% if n.moyenne >= 10 %}
-
-                        <span class="badge bg-success">
-
-                        {% else %}
-
-                        <span class="badge bg-danger">
-
+                    <option
+                        value="{{ e.id }}"
+                        {% if request.GET.etudiant == e.id|stringformat:"s" %}
+                            selected
                         {% endif %}
+                    >
 
+                        {{ e.nom }} {{ e.prenoms }}
 
-                            {{ n.moyenne|floatformat:2 }}
+                    </option>
 
+                    {% endfor %}
 
-                        </span>
+                </select>
 
-
-                    </td>
-
-
-
-
-                    <td>
-
-
-                        <a href="{% url 'note_edit' n.id %}"
-                           class="btn btn-warning btn-sm">
-
-                            <i class="bi bi-pencil"></i>
-
-                        </a>
+            </div>
 
 
 
-                        <a href="{% url 'note_delete' n.id %}"
-                           class="btn btn-danger btn-sm">
+            <!-- MATIERE -->
 
-                            <i class="bi bi-trash"></i>
+            <div class="col-lg-4 col-md-6">
 
-                        </a>
+                <label class="filter-label">
+
+                    <i class="bi bi-book me-1"></i>
+
+                    Matière
+
+                </label>
+
+                <select
+                    name="matiere"
+                    class="form-select modern-select"
+                >
+
+                    <option value="">
+                        Toutes les matières
+                    </option>
+
+                    {% for m in matieres %}
+
+                    <option
+                        value="{{ m.id }}"
+                        {% if request.GET.matiere == m.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ m.libelle }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
 
 
-                    </td>
+
+            <!-- SEMESTRE -->
+
+            <div class="col-lg-2 col-md-6">
+
+                <label class="filter-label">
+
+                    <i class="bi bi-calendar3 me-1"></i>
+
+                    Semestre
+
+                </label>
+
+                <select
+                    name="semestre"
+                    class="form-select modern-select"
+                >
+
+                    <option value="">
+                        Tous
+                    </option>
+
+                    <option
+                        value="1"
+                        {% if request.GET.semestre == "1" %}
+                            selected
+                        {% endif %}
+                    >
+
+                        Semestre 1
+
+                    </option>
+
+                    <option
+                        value="2"
+                        {% if request.GET.semestre == "2" %}
+                            selected
+                        {% endif %}
+                    >
+
+                        Semestre 2
+
+                    </option>
+
+                </select>
+
+            </div>
 
 
 
-                </tr>
+            <!-- BOUTON -->
 
+            <div class="col-lg-2 col-md-6 d-flex align-items-end">
 
+                <button
+                    type="submit"
+                    class="btn btn-filter w-100"
+                >
 
-                {% empty %}
+                    <i class="bi bi-search me-1"></i>
 
+                    Filtrer
 
-                <tr>
-
-                    <td colspan="7" class="text-center p-4">
-
-                        <i class="bi bi-info-circle"></i>
-
-                        Aucune note enregistrée
-
-                    </td>
-
-
-                </tr>
-
-
-                {% endfor %}
-
-
-                </tbody>
-
-
-            </table>
-
+                </button>
 
             </div>
 
@@ -384,112 +1225,441 @@
         </div>
 
 
-    </div>
-
-
-
-
-
-    <!-- PAGINATION -->
-
-
-    {% if page_obj %}
-
-
-    <nav class="mt-4">
-
-
-        <ul class="pagination justify-content-center">
-
-
-
-        {% if page_obj.has_previous %}
-
-
-        <li class="page-item">
-
-
-            <a class="page-link"
-               href="?page={{ page_obj.previous_page_number }}&etudiant={{ request.GET.etudiant }}&matiere={{ request.GET.matiere }}&semestre={{ request.GET.semestre }}">
-
-
-                Précédent
-
-
-            </a>
-
-
-        </li>
-
-
-        {% endif %}
-
-
-
-
-
-
-        {% for num in page_obj.paginator.page_range %}
-
-
-        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-
-
-            <a class="page-link"
-               href="?page={{ num }}&etudiant={{ request.GET.etudiant }}&matiere={{ request.GET.matiere }}&semestre={{ request.GET.semestre }}">
-
-
-                {{ num }}
-
-
-            </a>
-
-
-        </li>
-
-
-        {% endfor %}
-
-
-
-
-
-
-        {% if page_obj.has_next %}
-
-
-        <li class="page-item">
-
-
-            <a class="page-link"
-               href="?page={{ page_obj.next_page_number }}&etudiant={{ request.GET.etudiant }}&matiere={{ request.GET.matiere }}&semestre={{ request.GET.semestre }}">
-
-
-                Suivant
-
-
-            </a>
-
-
-        </li>
-
-
-        {% endif %}
-
-
-
-        </ul>
-
-
-    </nav>
-
-
-    {% endif %}
-
-
+    </form>
 
 
 </div>
 
+
+
+<!-- =====================================================
+     TABLEAU
+====================================================== -->
+
+<div class="notes-table-card">
+
+
+    <!-- HEADER TABLE -->
+
+    <div class="table-card-header">
+
+
+        <div class="table-title">
+
+            <div class="table-title-icon">
+
+                <i class="bi bi-table"></i>
+
+            </div>
+
+            <div>
+
+                <h5>
+                    Liste des notes
+                </h5>
+
+                <small>
+                    Résultats académiques des étudiants
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+
+            {{ page_obj.paginator.count|default:"0" }}
+
+            note{{ page_obj.paginator.count|pluralize }}
+
+        </span>
+
+
+    </div>
+
+
+
+    <!-- TABLE -->
+
+    <div class="table-responsive">
+
+        <table class="table notes-table align-middle">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Étudiant
+                    </th>
+
+                    <th>
+                        Matière
+                    </th>
+
+                    <th class="text-center">
+                        CC
+                    </th>
+
+                    <th class="text-center">
+                        Devoir
+                    </th>
+
+                    <th class="text-center">
+                        Examen
+                    </th>
+
+                    <th class="text-center">
+                        Moyenne
+                    </th>
+
+                    <th class="text-center">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+
+            <tbody>
+
+
+            {% for n in notes %}
+
+            <tr>
+
+
+                <!-- ETUDIANT -->
+
+                <td>
+
+                    <div class="student-info">
+
+                        <div class="student-avatar">
+
+                            {{ n.etudiant.nom|first|upper }}
+
+                        </div>
+
+                        <div>
+
+                            <div class="student-name">
+
+                                {{ n.etudiant.nom }}
+
+                                {{ n.etudiant.prenoms }}
+
+                            </div>
+
+                            <div class="student-label">
+
+                                Étudiant BTS
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+
+                <!-- MATIERE -->
+
+                <td>
+
+                    <span class="matiere-name">
+
+                        {{ n.matiere.libelle }}
+
+                    </span>
+
+                </td>
+
+
+
+                <!-- CC -->
+
+                <td class="text-center">
+
+                    <span class="note-value">
+
+                        {{ n.cc|floatformat:2 }}
+
+                    </span>
+
+                </td>
+
+
+
+                <!-- DEVOIR -->
+
+                <td class="text-center">
+
+                    <span class="note-value">
+
+                        {{ n.devoir|floatformat:2 }}
+
+                    </span>
+
+                </td>
+
+
+
+                <!-- EXAMEN -->
+
+                <td class="text-center">
+
+                    <span class="note-value">
+
+                        {{ n.examen|floatformat:2 }}
+
+                    </span>
+
+                </td>
+
+
+
+                <!-- MOYENNE -->
+
+                <td class="text-center">
+
+                    {% if n.moyenne >= 10 %}
+
+                        <span class="average-badge average-success">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            {{ n.moyenne|floatformat:2 }}
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="average-badge average-danger">
+
+                            <i class="bi bi-x-circle-fill"></i>
+
+                            {{ n.moyenne|floatformat:2 }}
+
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+
+                <!-- ACTIONS -->
+
+                <td>
+
+                    <div class="action-buttons justify-content-center">
+
+
+                        <a
+                            href="{% url 'note_edit' n.id %}"
+                            class="action-btn action-edit"
+                            title="Modifier la note"
+                        >
+
+                            <i class="bi bi-pencil-fill"></i>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'note_delete' n.id %}"
+                            class="action-btn action-delete"
+                            title="Supprimer la note"
+                            onclick="return confirm('Voulez-vous vraiment supprimer cette note ?');"
+                        >
+
+                            <i class="bi bi-trash3-fill"></i>
+
+                        </a>
+
+
+                    </div>
+
+                </td>
+
+
+            </tr>
+
+
+            {% empty %}
+
+
+            <!-- EMPTY -->
+
+            <tr>
+
+                <td colspan="7">
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+
+                            <i class="bi bi-journal-x"></i>
+
+                        </div>
+
+                        <h5>
+                            Aucune note trouvée
+                        </h5>
+
+                        <p>
+                            Aucune note ne correspond aux critères sélectionnés.
+                        </p>
+
+                        <a
+                            href="{% url 'note_add' %}"
+                            class="btn btn-primary rounded-3 px-4"
+                        >
+
+                            <i class="bi bi-plus-circle me-1"></i>
+
+                            Ajouter une note
+
+                        </a>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     PAGINATION
+====================================================== -->
+
+{% if page_obj %}
+
+<div class="pagination-wrapper">
+
+
+    <div class="pagination-info">
+
+        Page
+
+        <strong>
+            {{ page_obj.number }}
+        </strong>
+
+        sur
+
+        <strong>
+            {{ page_obj.paginator.num_pages }}
+        </strong>
+
+    </div>
+
+
+
+    {% if page_obj.paginator.num_pages > 1 %}
+
+    <nav>
+
+        <ul class="pagination">
+
+
+            {% if page_obj.has_previous %}
+
+            <li class="page-item">
+
+                <a
+                    class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}&etudiant={{ request.GET.etudiant }}&matiere={{ request.GET.matiere }}&semestre={{ request.GET.semestre }}"
+                    title="Page précédente"
+                >
+
+                    <i class="bi bi-chevron-left"></i>
+
+                </a>
+
+            </li>
+
+            {% endif %}
+
+
+
+            {% for num in page_obj.paginator.page_range %}
+
+            <li
+                class="page-item
+                {% if page_obj.number == num %}
+                    active
+                {% endif %}"
+            >
+
+                <a
+                    class="page-link"
+                    href="?page={{ num }}&etudiant={{ request.GET.etudiant }}&matiere={{ request.GET.matiere }}&semestre={{ request.GET.semestre }}"
+                >
+
+                    {{ num }}
+
+                </a>
+
+            </li>
+
+            {% endfor %}
+
+
+
+            {% if page_obj.has_next %}
+
+            <li class="page-item">
+
+                <a
+                    class="page-link"
+                    href="?page={{ page_obj.next_page_number }}&etudiant={{ request.GET.etudiant }}&matiere={{ request.GET.matiere }}&semestre={{ request.GET.semestre }}"
+                    title="Page suivante"
+                >
+
+                    <i class="bi bi-chevron-right"></i>
+
+                </a>
+
+            </li>
+
+            {% endif %}
+
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
+
+</div>
+
+{% endif %}
+
+
+</div>
 
 {% endblock %}

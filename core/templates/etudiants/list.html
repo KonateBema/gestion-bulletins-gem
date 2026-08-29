@@ -1,104 +1,941 @@
 {% extends "base.html" %}
 
 {% block title %}
-Gestion des étudiants BTS
+Gestion des étudiants BTS | GEM-Abidjan
 {% endblock %}
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
 
+/* =========================================================
+   GLOBAL
+========================================================= */
 
-<!-- ==========================
+.students-page {
+    padding: 25px 10px 50px;
+    color: #0f172a;
+}
+
+.students-page * {
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.students-header {
+    position: relative;
+    overflow: hidden;
+    padding: 30px;
+    border-radius: 24px;
+    margin-bottom: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a 0%,
+            #1e3a8a 55%,
+            #2563eb 100%
+        );
+
+    color: white;
+
+    box-shadow:
+        0 15px 40px rgba(15, 23, 42, .15);
+}
+
+.students-header::before {
+    content: "";
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.06);
+
+    right: -80px;
+    top: -130px;
+}
+
+.students-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    background: rgba(96,165,250,.12);
+
+    right: 180px;
+    bottom: -120px;
+}
+
+.students-header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.header-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    background: rgba(255,255,255,.12);
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    font-size: 25px;
+
+    margin-bottom: 18px;
+
+    backdrop-filter: blur(10px);
+}
+
+.students-header h2 {
+    font-size: 30px;
+    font-weight: 800;
+
+    margin-bottom: 8px;
+
+    letter-spacing: -.5px;
+}
+
+.students-header p {
+    margin: 0;
+
+    color: rgba(255,255,255,.78);
+
+    font-size: 14px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.total-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 12px 17px;
+
+    border-radius: 13px;
+
+    background: rgba(255,255,255,.12);
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    color: white;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    backdrop-filter: blur(10px);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.modern-btn {
+    border: none;
+
+    padding: 12px 18px;
+
+    border-radius: 13px;
+
+    font-weight: 700;
+
+    font-size: 13px;
+
+    transition: all .25s ease;
+}
+
+.modern-btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-import {
+    background: #16a34a;
+    color: white;
+
+    box-shadow:
+        0 8px 18px rgba(22,163,74,.20);
+}
+
+.btn-add {
+    background: white;
+    color: #2563eb;
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12);
+}
+
+/* =========================================================
+   FILIERE CARD
+========================================================= */
+
+.modern-card {
+    background: white;
+
+    border: 1px solid #eef2f7;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.06);
+
+    overflow: hidden;
+}
+
+.filiere-card {
+    padding: 23px;
+    margin-bottom: 20px;
+}
+
+.card-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    margin-bottom: 17px;
+}
+
+.section-title-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.filiere-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.filiere-btn {
+    border-radius: 50px;
+
+    padding: 9px 15px;
+
+    font-size: 12px;
+
+    font-weight: 650;
+
+    border: 1px solid #e2e8f0;
+
+    background: #f8fafc;
+
+    color: #475569;
+
+    transition: all .25s ease;
+
+    text-decoration: none;
+}
+
+.filiere-btn:hover {
+    transform: translateY(-2px);
+
+    border-color: #2563eb;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.filiere-btn.active {
+    background: #2563eb;
+    color: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 7px 16px rgba(37,99,235,.20);
+}
+
+.filiere-btn.all-active {
+    background: #0f172a;
+    color: white;
+
+    border-color: #0f172a;
+}
+
+/* =========================================================
+   FILTER CARD
+========================================================= */
+
+.filter-card {
+    padding: 22px;
+
+    margin-bottom: 22px;
+}
+
+.filter-label {
+    font-size: 12px;
+
+    font-weight: 800;
+
+    color: #334155;
+
+    margin-bottom: 8px;
+}
+
+.modern-input,
+.modern-select {
+    min-height: 47px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    font-size: 13px;
+
+    transition: all .25s ease;
+}
+
+.modern-input {
+    padding-left: 15px;
+}
+
+.modern-input:focus,
+.modern-select:focus {
+    background: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+}
+
+/* =========================================================
+   SEARCH ICON
+========================================================= */
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper i {
+    position: absolute;
+
+    left: 15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #94a3b8;
+
+    z-index: 3;
+}
+
+.search-wrapper input {
+    padding-left: 43px;
+}
+
+/* =========================================================
+   SELECTED FILIERE
+========================================================= */
+
+.selected-filiere {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 18px 20px;
+
+    margin-bottom: 22px;
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #f0f9ff
+        );
+
+    border: 1px solid #dbeafe;
+}
+
+.selected-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 20px;
+
+    box-shadow:
+        0 8px 18px rgba(37,99,235,.20);
+}
+
+.selected-filiere h5 {
+    margin: 0 0 3px;
+
+    font-weight: 800;
+
+    color: #1e3a8a;
+}
+
+.selected-filiere small {
+    color: #64748b;
+}
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+
+.table-card {
+    margin-bottom: 20px;
+}
+
+.table-header {
+    padding: 20px 23px;
+
+    border-bottom: 1px solid #eef2f7;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.table-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.table-title-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.table-count {
+    font-size: 11px;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.students-table {
+    margin: 0;
+
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.students-table thead th {
+    background: #f8fafc;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    font-weight: 800;
+
+    padding: 15px 16px;
+
+    border-bottom: 1px solid #eef2f7;
+
+    white-space: nowrap;
+}
+
+.students-table tbody td {
+    padding: 15px 16px;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    vertical-align: middle;
+
+    font-size: 13px;
+}
+
+.students-table tbody tr {
+    transition: all .2s ease;
+}
+
+.students-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.students-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================================================
+   STUDENT
+========================================================= */
+
+.student-info {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 220px;
+}
+
+.student-avatar {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #06b6d4
+        );
+
+    color: white;
+
+    font-weight: 800;
+
+    font-size: 14px;
+
+    box-shadow:
+        0 7px 15px rgba(37,99,235,.15);
+}
+
+.student-name {
+    font-weight: 750;
+
+    color: #0f172a;
+
+    margin-bottom: 2px;
+}
+
+.student-subtitle {
+    color: #94a3b8;
+
+    font-size: 11px;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.badge-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 7px 10px;
+
+    border-radius: 9px;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.badge-matricule {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.badge-male {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge-female {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.badge-class {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.badge-filiere {
+    background: #dcfce7;
+    color: #15803d;
+
+    max-width: 220px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 7px;
+}
+
+.action-icon {
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition: all .25s ease;
+}
+
+.action-edit {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.action-delete {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.action-icon:hover {
+    transform: translateY(-2px) scale(1.04);
+}
+
+.action-edit:hover {
+    background: #ea580c;
+    color: white;
+}
+
+.action-delete:hover {
+    background: #dc2626;
+    color: white;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+    padding: 60px 20px;
+
+    text-align: center;
+}
+
+.empty-icon {
+    width: 75px;
+    height: 75px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 17px;
+
+    border-radius: 22px;
+
+    background: #f1f5f9;
+
+    color: #94a3b8;
+
+    font-size: 32px;
+}
+
+.empty-state h5 {
+    font-weight: 800;
+
+    color: #334155;
+}
+
+.empty-state p {
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    margin-bottom: 20px;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination-wrapper {
+    display: flex;
+
+    justify-content: center;
+
+    margin-top: 25px;
+}
+
+.modern-pagination {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 6px;
+
+    background: white;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.07);
+
+    border: 1px solid #eef2f7;
+}
+
+.page-btn {
+    min-width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition: all .2s ease;
+}
+
+.page-btn:hover {
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.page-current {
+    background: #2563eb;
+
+    color: white;
+
+    box-shadow:
+        0 6px 15px rgba(37,99,235,.20);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+
+    .students-header {
+        padding: 25px;
+    }
+
+    .header-actions {
+        margin-top: 20px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .students-page {
+        padding: 15px 5px 40px;
+    }
+
+    .students-header {
+        border-radius: 19px;
+    }
+
+    .students-header h2 {
+        font-size: 23px;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions > * {
+        flex: 1;
+    }
+
+    .filter-card,
+    .filiere-card {
+        padding: 18px;
+    }
+
+    .table-header {
+        padding: 17px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .header-actions {
+        flex-direction: column;
+    }
+
+    .header-actions > * {
+        width: 100%;
+    }
+
+    .students-header p {
+        line-height: 1.6;
+    }
+
+}
+
+</style>
+
+<div class="container-fluid students-page">
+
+<!-- =========================================================
      HEADER
-========================== -->
+========================================================= -->
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="students-header">
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            👨‍🎓 Gestion des étudiants BTS
-        </h2>
 
-        <p class="text-muted mb-0">
-            Liste et administration des étudiants
-        </p>
+<div class="students-header-content">
+
+    <div class="header-icon">
+        <i class="bi bi-people-fill"></i>
     </div>
 
-    <div class="d-flex gap-2">
+    <div class="row align-items-end">
 
-        <span class="badge bg-primary fs-6 p-3">
-            Total : {{ page_obj.paginator.count }}
-        </span>
+        <div class="col-lg-7">
 
-        <a href="{% url 'import_etudiants_excel' %}"
-           class="btn btn-success shadow-sm">
+            <h2>
+                Gestion des étudiants BTS
+            </h2>
 
-            <i class="bi bi-file-earmark-excel"></i>
-            Importer Excel
+            <p>
+                Consultez, recherchez et administrez les étudiants
+                inscrits dans les différentes filières BTS.
+            </p>
 
-        </a>
+        </div>
 
-        <a href="{% url 'etudiant_add' %}"
-           class="btn btn-primary shadow-sm">
+        <div class="col-lg-5">
 
-            ➕ Nouvel étudiant
+            <div class="header-actions justify-content-lg-end">
 
-        </a>
+                <span class="total-badge">
 
-    </div>
+                    <i class="bi bi-people-fill"></i>
 
-</div>
+                    {{ page_obj.paginator.count }}
 
+                    étudiants
 
-<!-- ==========================
-     MENU FILIÈRES
-========================== -->
-
-<div class="card border-0 shadow-sm rounded-4 mb-4">
-
-    <div class="card-body">
-
-        <h5 class="fw-bold mb-3">
-            🎓 Filières BTS
-        </h5>
-
-        <div class="d-flex flex-wrap gap-2">
-
-            <!-- Toutes les filières -->
-
-            <a href="?q={{ request.GET.q }}&niveau={{ request.GET.niveau }}"
-               class="btn
-               {% if not request.GET.filiere_bts %}
-                   btn-dark
-               {% else %}
-                   btn-outline-dark
-               {% endif %}
-               rounded-pill px-4">
-
-                📚 Toutes les filières
-
-            </a>
+                </span>
 
 
-            <!-- Liste des filières -->
+                <a
+                    href="{% url 'import_etudiants_excel' %}"
+                    class="modern-btn btn-import text-decoration-none"
+                >
 
-            {% for f in filieres_bts %}
+                    <i class="bi bi-file-earmark-excel me-1"></i>
 
-                <a href="?filiere_bts={{ f.id }}&q={{ request.GET.q }}&niveau={{ request.GET.niveau }}"
-                   class="btn
-                   {% if request.GET.filiere_bts == f.id|stringformat:'s' %}
-                       btn-primary
-                   {% else %}
-                       btn-outline-primary
-                   {% endif %}
-                   rounded-pill px-4">
-
-                    🎓 {{ f.nom }}
+                    Importer Excel
 
                 </a>
 
-            {% endfor %}
+
+                <a
+                    href="{% url 'etudiant_add' %}"
+                    class="modern-btn btn-add text-decoration-none"
+                >
+
+                    <i class="bi bi-person-plus-fill me-1"></i>
+
+                    Nouvel étudiant
+
+                </a>
+
+            </div>
 
         </div>
 
@@ -106,380 +943,646 @@ Gestion des étudiants BTS
 
 </div>
 
+</div>
 
-<!-- ==========================
+<!-- =========================================================
+     FILIERES
+========================================================= -->
+
+<div class="modern-card filiere-card">
+
+
+<div class="card-section-title">
+
+    <div class="section-title-icon">
+
+        <i class="bi bi-mortarboard-fill"></i>
+
+    </div>
+
+    <span>
+        Filières BTS
+    </span>
+
+</div>
+
+
+<div class="filiere-list">
+
+
+    <!-- TOUTES -->
+
+    <a
+        href="?q={{ request.GET.q }}&niveau={{ request.GET.niveau }}"
+        class="filiere-btn
+        {% if not request.GET.filiere_bts %}
+            all-active
+        {% endif %}"
+    >
+
+        <i class="bi bi-grid-fill me-1"></i>
+
+        Toutes les filières
+
+    </a>
+
+
+    <!-- FILIERES -->
+
+    {% for f in filieres_bts %}
+
+        <a
+            href="?filiere_bts={{ f.id }}&q={{ request.GET.q }}&niveau={{ request.GET.niveau }}"
+            class="filiere-btn
+            {% if request.GET.filiere_bts == f.id|stringformat:'s' %}
+                active
+            {% endif %}"
+        >
+
+            <i class="bi bi-mortarboard me-1"></i>
+
+            {{ f.nom }}
+
+        </a>
+
+    {% endfor %}
+
+
+</div>
+
+</div>
+
+<!-- =========================================================
      FILTRES
-========================== -->
+========================================================= -->
 
-<div class="card border-0 shadow-sm rounded-4 mb-4">
+<div class="modern-card filter-card">
 
-    <div class="card-body">
+<form method="GET">
 
-        <form method="GET" class="row g-3">
+    {% if request.GET.filiere_bts %}
 
-            <!-- Conserver la filière sélectionnée -->
+        <input
+            type="hidden"
+            name="filiere_bts"
+            value="{{ request.GET.filiere_bts }}"
+        >
 
-            {% if request.GET.filiere_bts %}
-
-                <input type="hidden"
-                       name="filiere_bts"
-                       value="{{ request.GET.filiere_bts }}">
-
-            {% endif %}
+    {% endif %}
 
 
-            <div class="col-lg-5">
+    <div class="row g-3 align-items-end">
 
-                <label class="form-label fw-bold">
-                    🔎 Recherche
-                </label>
+
+        <!-- RECHERCHE -->
+
+        <div class="col-xl-6 col-lg-5">
+
+            <label class="filter-label">
+
+                <i class="bi bi-search me-1"></i>
+
+                Rechercher un étudiant
+
+            </label>
+
+            <div class="search-wrapper">
+
+                <i class="bi bi-search"></i>
 
                 <input
                     type="text"
                     name="q"
-                    class="form-control"
-                    placeholder="Nom, prénom, matricule..."
-                    value="{{ request.GET.q }}">
+                    class="form-control modern-input"
+                    placeholder="Nom, prénom ou matricule..."
+                    value="{{ request.GET.q }}"
+                >
 
             </div>
-
-
-            <div class="col-lg-4">
-
-                <label class="form-label fw-bold">
-                    📚 Année
-                </label>
-
-                <select name="niveau" class="form-select">
-
-                    <option value="">
-                        Toutes les années
-                    </option>
-
-                    <option value="BTS 1"
-                        {% if request.GET.niveau == "BTS 1" %}
-                            selected
-                        {% endif %}>
-
-                        1ère Année
-
-                    </option>
-
-                    <option value="BTS 2"
-                        {% if request.GET.niveau == "BTS 2" %}
-                            selected
-                        {% endif %}>
-
-                        2ème Année
-
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="col-lg-3 d-flex align-items-end">
-
-                <button type="submit"
-                        class="btn btn-dark w-100">
-
-                    🔎 Filtrer
-
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- ==========================
-     FILIÈRE SÉLECTIONNÉE
-========================== -->
-
-{% if request.GET.filiere_bts %}
-
-    {% for f in filieres_bts %}
-
-        {% if request.GET.filiere_bts == f.id|stringformat:'s' %}
-
-            <div class="alert alert-primary border-0 shadow-sm rounded-4">
-
-                <div class="d-flex align-items-center">
-
-                    <div class="fs-2 me-3">
-                        🎓
-                    </div>
-
-                    <div>
-
-                        <h5 class="fw-bold mb-1">
-                            {{ f.nom }}
-                        </h5>
-
-                        <small>
-                            Liste des étudiants de cette filière
-                        </small>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        {% endif %}
-
-    {% endfor %}
-
-{% endif %}
-
-
-<!-- ==========================
-     TABLE
-========================== -->
-
-<div class="card border-0 shadow-sm rounded-4">
-
-    <div class="card-body p-0">
-
-        <div class="table-responsive">
-
-            <table class="table table-hover align-middle mb-0">
-
-                <thead class="table-dark">
-
-                    <tr>
-
-                        <th class="ps-4">
-                            Nom complet
-                        </th>
-
-                        <th>
-                            Matricule
-                        </th>
-
-                        <th>
-                            Sexe
-                        </th>
-
-                        <th>
-                            Classe
-                        </th>
-
-                        <th>
-                            Filière
-                        </th>
-
-                        <th class="text-center">
-                            Actions
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    {% for e in page_obj %}
-
-                        <tr>
-
-                            <td class="ps-4 fw-semibold">
-
-                                👤 {{ e.nom }} {{ e.prenoms }}
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="badge bg-info">
-
-                                    {{ e.matricule }}
-
-                                </span>
-
-                            </td>
-
-
-                            <td>
-
-                                {% if e.sexe == "M" %}
-
-                                    <span class="badge bg-primary">
-                                        Homme
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="badge bg-danger">
-                                        Femme
-                                    </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <td>
-
-                                {{ e.classe|default:"-" }}
-
-                            </td>
-
-
-                            <td>
-
-                                {% if e.filiere_bts %}
-
-                                    <span class="badge bg-success">
-
-                                        {{ e.filiere_bts.nom }}
-
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="badge bg-secondary">
-
-                                        Non définie
-
-                                    </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <td class="text-center">
-
-                                <a href="{% url 'etudiant_edit' e.id %}"
-                                   class="btn btn-outline-warning btn-sm">
-
-                                    ✏️
-
-                                </a>
-
-
-                                <a href="{% url 'etudiant_delete' e.id %}"
-                                   class="btn btn-outline-danger btn-sm"
-                                   onclick="return confirm('Supprimer cet étudiant ?')">
-
-                                    🗑️
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-
-                    {% empty %}
-
-                        <tr>
-
-                            <td colspan="6"
-                                class="text-center py-5">
-
-                                <div class="fs-1">
-                                    📭
-                                </div>
-
-                                <h5 class="mt-2">
-                                    Aucun étudiant trouvé
-                                </h5>
-
-                                <p class="text-muted">
-                                    Aucun étudiant ne correspond à cette sélection.
-                                </p>
-
-                                <a href="{% url 'etudiant_add' %}"
-                                   class="btn btn-primary">
-
-                                    ➕ Ajouter un étudiant
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
 
         </div>
 
+
+        <!-- NIVEAU -->
+
+        <div class="col-xl-3 col-lg-4">
+
+            <label class="filter-label">
+
+                <i class="bi bi-layers-fill me-1"></i>
+
+                Niveau
+
+            </label>
+
+            <select
+                name="niveau"
+                class="form-select modern-select"
+            >
+
+                <option value="">
+                    Tous les niveaux
+                </option>
+
+                <option
+                    value="BTS 1"
+                    {% if request.GET.niveau == "BTS 1" %}
+                        selected
+                    {% endif %}
+                >
+
+                    BTS 1 — 1ère année
+
+                </option>
+
+                <option
+                    value="BTS 2"
+                    {% if request.GET.niveau == "BTS 2" %}
+                        selected
+                    {% endif %}
+                >
+
+                    BTS 2 — 2ème année
+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- BOUTON -->
+
+        <div class="col-xl-3 col-lg-3">
+
+            <button
+                type="submit"
+                class="btn btn-primary w-100"
+                style="
+                    min-height:47px;
+                    border-radius:12px;
+                    font-size:13px;
+                    font-weight:700;
+                "
+            >
+
+                <i class="bi bi-funnel-fill me-1"></i>
+
+                Appliquer les filtres
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+</form>
+
+</div>
+
+<!-- =========================================================
+     FILIERE SELECTIONNEE
+========================================================= -->
+
+{% if request.GET.filiere_bts %}
+
+{% for f in filieres_bts %}
+
+    {% if request.GET.filiere_bts == f.id|stringformat:'s' %}
+
+        <div class="selected-filiere">
+
+            <div class="selected-icon">
+
+                <i class="bi bi-mortarboard-fill"></i>
+
+            </div>
+
+            <div>
+
+                <h5>
+                    {{ f.nom }}
+                </h5>
+
+                <small>
+                    Affichage des étudiants appartenant à cette filière
+                </small>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+{% endfor %}
+
+
+{% endif %}
+
+<!-- =========================================================
+     TABLEAU
+========================================================= -->
+
+<div class="modern-card table-card">
+
+<!-- TABLE HEADER -->
+
+<div class="table-header">
+
+    <div class="table-title">
+
+        <div class="table-title-icon">
+
+            <i class="bi bi-list-ul"></i>
+
+        </div>
+
+        Liste des étudiants
+
+    </div>
+
+
+    <span class="table-count">
+
+        {{ page_obj.paginator.count }} résultat{{ page_obj.paginator.count|pluralize }}
+
+    </span>
+
+</div>
+
+
+<!-- TABLE -->
+
+<div class="table-responsive">
+
+    <table class="table students-table align-middle">
+
+        <thead>
+
+            <tr>
+
+                <th class="ps-4">
+                    Étudiant
+                </th>
+
+                <th>
+                    Matricule
+                </th>
+
+                <th>
+                    Sexe
+                </th>
+
+                <th>
+                    Classe
+                </th>
+
+                <th>
+                    Filière
+                </th>
+
+                <th class="text-center">
+                    Actions
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+        {% for e in page_obj %}
+
+            <tr>
+
+
+                <!-- ETUDIANT -->
+
+                <td class="ps-4">
+
+                    <div class="student-info">
+
+                        <div class="student-avatar">
+
+                            {{ e.nom|first|upper }}
+
+                        </div>
+
+                        <div>
+
+                            <div class="student-name">
+
+                                {{ e.nom }}
+
+                                {{ e.prenoms }}
+
+                            </div>
+
+                            <div class="student-subtitle">
+
+                                <i class="bi bi-person-badge me-1"></i>
+
+                                Étudiant BTS
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+                <!-- MATRICULE -->
+
+                <td>
+
+                    <span class="badge-modern badge-matricule">
+
+                        <i class="bi bi-hash"></i>
+
+                        {{ e.matricule }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- SEXE -->
+
+                <td>
+
+                    {% if e.sexe == "M" %}
+
+                        <span class="badge-modern badge-male">
+
+                            <i class="bi bi-gender-male"></i>
+
+                            Homme
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge-modern badge-female">
+
+                            <i class="bi bi-gender-female"></i>
+
+                            Femme
+
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- CLASSE -->
+
+                <td>
+
+                    {% if e.classe %}
+
+                        <span class="badge-modern badge-class">
+
+                            <i class="bi bi-building"></i>
+
+                            {{ e.classe }}
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="text-muted">
+                            —
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- FILIERE -->
+
+                <td>
+
+                    {% if e.filiere_bts %}
+
+                        <span
+                            class="badge-modern badge-filiere"
+                            title="{{ e.filiere_bts.nom }}"
+                        >
+
+                            <i class="bi bi-mortarboard-fill"></i>
+
+                            {{ e.filiere_bts.nom }}
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge-modern bg-secondary-subtle text-secondary">
+
+                            Non définie
+
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- ACTIONS -->
+
+                <td>
+
+                    <div class="actions">
+
+
+                        <a
+                            href="{% url 'etudiant_edit' e.id %}"
+                            class="action-icon action-edit"
+                            title="Modifier l'étudiant"
+                        >
+
+                            <i class="bi bi-pencil-fill"></i>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'etudiant_delete' e.id %}"
+                            class="action-icon action-delete"
+                            title="Supprimer l'étudiant"
+                            onclick="
+                                return confirm(
+                                    'Êtes-vous sûr de vouloir supprimer cet étudiant ?'
+                                )
+                            "
+                        >
+
+                            <i class="bi bi-trash3-fill"></i>
+
+                        </a>
+
+
+                    </div>
+
+                </td>
+
+
+            </tr>
+
+
+        {% empty %}
+
+
+            <!-- EMPTY -->
+
+            <tr>
+
+                <td colspan="6">
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+
+                            <i class="bi bi-person-x"></i>
+
+                        </div>
+
+                        <h5>
+                            Aucun étudiant trouvé
+                        </h5>
+
+                        <p>
+
+                            Aucun étudiant ne correspond
+                            aux critères sélectionnés.
+
+                        </p>
+
+                        <a
+                            href="{% url 'etudiant_add' %}"
+                            class="btn btn-primary"
+                            style="
+                                border-radius:12px;
+                                font-weight:700;
+                                font-size:13px;
+                                padding:11px 18px;
+                            "
+                        >
+
+                            <i class="bi bi-person-plus-fill me-1"></i>
+
+                            Ajouter un étudiant
+
+                        </a>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+
+        {% endfor %}
+
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+</div>
+
+<!-- =========================================================
+     PAGINATION
+========================================================= -->
+
+{% if page_obj.paginator.num_pages > 1 %}
+
+<div class="pagination-wrapper">
+
+    <div class="modern-pagination">
+
+
+        {% if page_obj.has_previous %}
+
+            <a
+                class="page-btn"
+                href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&niveau={{ request.GET.niveau }}&filiere_bts={{ request.GET.filiere_bts }}"
+                title="Page précédente"
+            >
+
+                <i class="bi bi-chevron-left"></i>
+
+            </a>
+
+        {% endif %}
+
+
+        <span class="page-btn page-current">
+
+            {{ page_obj.number }}
+
+        </span>
+
+
+        <span
+            class="px-1"
+            style="
+                color:#94a3b8;
+                font-size:12px;
+                font-weight:600;
+            "
+        >
+
+            sur
+
+        </span>
+
+
+        <span
+            style="
+                color:#475569;
+                font-size:12px;
+                font-weight:700;
+                padding:0 5px;
+            "
+        >
+
+            {{ page_obj.paginator.num_pages }}
+
+        </span>
+
+
+        {% if page_obj.has_next %}
+
+            <a
+                class="page-btn"
+                href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&niveau={{ request.GET.niveau }}&filiere_bts={{ request.GET.filiere_bts }}"
+                title="Page suivante"
+            >
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+        {% endif %}
+
+
     </div>
 
 </div>
 
 
-<!-- ==========================
-     PAGINATION
-========================== -->
-
-{% if page_obj.paginator.num_pages > 1 %}
-
-    <nav class="mt-4">
-
-        <ul class="pagination justify-content-center">
-
-            {% if page_obj.has_previous %}
-
-                <li class="page-item">
-
-                    <a class="page-link"
-                       href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&niveau={{ request.GET.niveau }}&filiere_bts={{ request.GET.filiere_bts }}">
-
-                        ⬅
-
-                    </a>
-
-                </li>
-
-            {% endif %}
-
-
-            <li class="page-item active">
-
-                <span class="page-link">
-
-                    {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}
-
-                </span>
-
-            </li>
-
-
-            {% if page_obj.has_next %}
-
-                <li class="page-item">
-
-                    <a class="page-link"
-                       href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&niveau={{ request.GET.niveau }}&filiere_bts={{ request.GET.filiere_bts }}">
-
-                        ➡
-
-                    </a>
-
-                </li>
-
-            {% endif %}
-
-        </ul>
-
-    </nav>
-
 {% endif %}
-
 
 </div>
 

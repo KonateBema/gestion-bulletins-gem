@@ -1,279 +1,614 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Ajouter une matière BTS
+{% endblock %}
+
 {% block content %}
 
-<div class="container py-5">
+<style>
 
-    <div class="row justify-content-center">
+/* =========================================================
+   GLOBAL
+========================================================= */
 
-        <div class="col-lg-6 col-md-8">
+.matiere-form-page {
+    min-height: calc(100vh - 80px);
+    padding: 35px 15px 60px;
+    font-family: "Inter", "Segoe UI", sans-serif;
+}
 
-            <!-- ================================================= -->
-            <!-- CARD PRINCIPALE -->
-            <!-- ================================================= -->
+/* =========================================================
+   MAIN CARD
+========================================================= */
 
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+.form-card {
+    max-width: 850px;
+    margin: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #e9eef5;
+
+    border-radius: 26px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, .09);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.form-header {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 30px 35px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd 0%,
+            #4f46e5 55%,
+            #7c3aed 100%
+        );
+
+    color: white;
+}
+
+.form-header::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 230px;
+    height: 230px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.08);
+
+    right: -80px;
+    top: -120px;
+}
+
+.form-header::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.06);
+
+    left: 40%;
+
+    bottom: -110px;
+}
+
+.form-header-content {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+.header-icon {
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    background: rgba(255,255,255,.15);
+
+    border: 1px solid rgba(255,255,255,.20);
+
+    font-size: 25px;
+
+    backdrop-filter: blur(8px);
+}
+
+.form-header h3 {
+
+    font-size: 24px;
+
+    font-weight: 800;
+
+    margin: 0 0 5px;
+}
+
+.form-header p {
+
+    margin: 0;
+
+    font-size: 13px;
+
+    opacity: .88;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.form-body {
+
+    padding: 35px;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.form-section {
+
+    margin-bottom: 30px;
+}
+
+.section-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid #edf1f5;
+}
+
+.section-heading-icon {
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 15px;
+}
+
+.section-heading h5 {
+
+    margin: 0;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    color: #1e293b;
+}
+
+.section-heading small {
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    margin-left: auto;
+}
+
+/* =========================================================
+   FIELD
+========================================================= */
+
+.form-field {
+
+    margin-bottom: 20px;
+}
+
+.form-label-modern {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #334155;
+
+    font-size: 12px;
+
+    font-weight: 750;
+}
+
+.required {
+
+    color: #ef4444;
+
+    margin-left: 2px;
+}
+
+/* =========================================================
+   INPUT WRAPPER
+========================================================= */
+
+.input-modern {
+
+    position: relative;
+}
+
+.input-modern input,
+.input-modern select,
+.input-modern textarea {
+
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 11px 14px 11px 44px;
+
+    border: 1px solid #dfe6ee;
+
+    border-radius: 13px;
+
+    background: #f8fafc;
+
+    color: #1e293b;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition: all .25s ease;
+}
+
+.input-modern select {
+
+    cursor: pointer;
+}
+
+.input-modern textarea {
+
+    min-height: 100px;
+
+    resize: vertical;
+}
+
+.input-modern input::placeholder,
+.input-modern textarea::placeholder {
+
+    color: #a0aec0;
+}
+
+/* =========================================================
+   INPUT ICON
+========================================================= */
+
+.input-icon {
+
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #94a3b8;
+
+    font-size: 16px;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    transition: .25s;
+}
+
+.input-modern:focus-within .input-icon {
+
+    color: #2563eb;
+}
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.input-modern input:focus,
+.input-modern select:focus,
+.input-modern textarea:focus {
+
+    background: #ffffff;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+}
+
+/* =========================================================
+   HELP TEXT
+========================================================= */
+
+.help-text {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 7px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+.help-text i {
+
+    color: #64748b;
+}
+
+/* =========================================================
+   ERRORS
+========================================================= */
+
+.field-errors {
+
+    margin-top: 7px;
+
+    padding: 8px 11px;
+
+    border-radius: 9px;
+
+    background: #fef2f2;
+
+    border: 1px solid #fecaca;
+
+    color: #dc2626;
+
+    font-size: 11px;
+}
+
+.field-errors ul {
+
+    padding-left: 17px;
+
+    margin: 0;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.form-actions {
+
+    padding-top: 10px;
+
+    border-top: 1px solid #edf1f5;
+
+    margin-top: 10px;
+}
+
+.btn-modern {
+
+    min-height: 48px;
+
+    border-radius: 13px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition: all .25s ease;
+}
+
+.btn-save {
+
+    border: none;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 10px 20px rgba(37,99,235,.18);
+}
+
+.btn-save:hover {
+
+    color: white;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 28px rgba(37,99,235,.25);
+}
+
+.btn-cancel {
+
+    border: 1px solid #dfe6ee;
+
+    background: #f8fafc;
+
+    color: #475569;
+}
+
+.btn-cancel:hover {
+
+    background: #f1f5f9;
+
+    color: #1e293b;
+
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   INFO BOX
+========================================================= */
+
+.info-box {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    border-radius: 13px;
+
+    background: #eff6ff;
+
+    border: 1px solid #dbeafe;
+
+    margin-bottom: 25px;
+}
+
+.info-box-icon {
+
+    color: #2563eb;
+
+    font-size: 18px;
+}
+
+.info-box strong {
+
+    display: block;
+
+    color: #1e40af;
+
+    font-size: 12px;
+
+    margin-bottom: 2px;
+}
+
+.info-box span {
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .matiere-form-page {
+
+        padding: 20px 10px 40px;
+
+    }
+
+    .form-header {
+
+        padding: 25px 20px;
+
+    }
+
+    .form-body {
+
+        padding: 25px 20px;
+
+    }
+
+    .form-header h3 {
+
+        font-size: 20px;
+
+    }
+
+    .section-heading small {
+
+        display: none;
+
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .form-card {
+
+        border-radius: 20px;
+
+    }
+
+    .header-icon {
+
+        width: 50px;
+        height: 50px;
+
+    }
+
+    .form-actions .btn {
+
+        width: 100%;
+
+    }
+
+}
+
+</style>
+
+<div class="container-fluid matiere-form-page">
+
+<div class="form-card">
 
 
-                <!-- ================================================= -->
-                <!-- HEADER -->
-                <!-- ================================================= -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-                <div class="bg-primary text-white text-center py-4">
+    <div class="form-header">
 
-                    <h3 class="mb-1 fw-bold">
-                        📘 Ajouter une matière
-                    </h3>
+        <div class="form-header-content">
 
-                    <small class="opacity-75">
-                        Remplissez les informations de la matière
-                    </small>
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="header-icon">
+
+                    <i class="bi bi-journal-plus"></i>
 
                 </div>
 
-
-                <!-- ================================================= -->
-                <!-- BODY -->
-                <!-- ================================================= -->
-
-                <div class="card-body p-4 p-md-5">
-
-                    <form method="POST">
-
-                        {% csrf_token %}
-
-
-                        <!-- ================================================= -->
-                        <!-- CODE MATIERE -->
-                        <!-- ================================================= -->
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Code matière
-                            </label>
-
-                            <div class="input-modern">
-                                {{ form.code }}
-                            </div>
-
-                            {% if form.code.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.code.errors }}
-                                </div>
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- LIBELLE -->
-                        <!-- ================================================= -->
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Libellé
-                            </label>
-
-                            <div class="input-modern">
-                                {{ form.libelle }}
-                            </div>
-
-                            {% if form.libelle.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.libelle.errors }}
-                                </div>
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- COEFFICIENT -->
-                        <!-- ================================================= -->
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Coefficient
-                            </label>
-
-                            <div class="input-modern">
-                                {{ form.coefficient }}
-                            </div>
-
-                            {% if form.coefficient.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.coefficient.errors }}
-                                </div>
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- VOLUME HORAIRE -->
-                        <!-- ================================================= -->
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Volume horaire
-                            </label>
-
-                            <div class="input-modern">
-                                {{ form.volume_horaire }}
-                            </div>
-
-                            {% if form.volume_horaire.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.volume_horaire.errors }}
-                                </div>
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- FILIERE BTS -->
-                        <!-- ================================================= -->
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Filière BTS
-                            </label>
-
-                            <div class="input-modern">
-                                {{ form.filiere_bts }}
-                            </div>
-
-                            {% if form.filiere_bts.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.filiere_bts.errors }}
-                                </div>
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- GRANDE UNITE -->
-                        <!-- ================================================= -->
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Grande unité
-                            </label>
-
-                            <div class="input-modern">
-                                {{ form.grande_unite }}
-                            </div>
-
-                            <small class="text-muted d-block mt-2">
-                                Sélectionnez l'enseignement auquel
-                                appartient cette matière.
-                            </small>
-
-                            {% if form.grande_unite.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.grande_unite.errors }}
-                                </div>
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- CATEGORIE -->
-                        <!-- ================================================= -->
-
-                        <!-- <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Catégorie
-                            </label>
-
-                            <div class="input-modern">
-                                {{ form.categorie }}
-                            </div>
-
-                            <small class="text-muted d-block mt-2">
-                                Sélectionnez la catégorie de cette matière.
-                            </small>
-
-                            {% if form.categorie.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.categorie.errors }}
-                                </div>
-                            {% endif %}
-
-                        </div> -->
-
-
-                        <!-- ================================================= -->
-                        <!-- PROFESSEUR -->
-                        <!-- ================================================= -->
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Professeur attribué
-                            </label>
-
-                            <div class="input-modern">
-                                {{ form.professeur }}
-                            </div>
-
-                            <small class="text-muted d-block mt-2">
-                                Saisissez le nom et prénom du professeur
-                                responsable de cette matière.
-                            </small>
-
-                            {% if form.professeur.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.professeur.errors }}
-                                </div>
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- BOUTON ENREGISTRER -->
-                        <!-- ================================================= -->
-
-                        <button
-                            type="submit"
-                            class="btn btn-success w-100 py-3 fw-bold rounded-3 shadow-sm"
-                        >
-
-                            <i class="bi bi-check-circle me-2"></i>
-
-                            Enregistrer la matière
-
-                        </button>
-
-
-                        <!-- ================================================= -->
-                        <!-- RETOUR -->
-                        <!-- ================================================= -->
-
-                        <a
-                            href="{% url 'matiere_list' %}"
-                            class="btn btn-outline-secondary w-100 mt-3 py-2 rounded-3"
-                        >
-
-                            <i class="bi bi-arrow-left me-2"></i>
-
-                            Retour à la liste
-
-                        </a>
-
-
-                    </form>
+                <div>
+
+                    <h3>
+                        Ajouter une matière
+                    </h3>
+
+                    <p>
+                        Créez et configurez une nouvelle matière BTS
+                    </p>
 
                 </div>
 
@@ -283,108 +618,509 @@
 
     </div>
 
+
+    <!-- =====================================================
+         BODY
+    ====================================================== -->
+
+    <div class="form-body">
+
+
+        <!-- INFORMATION -->
+
+        <div class="info-box">
+
+            <div class="info-box-icon">
+
+                <i class="bi bi-info-circle-fill"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Informations sur la matière
+                </strong>
+
+                <span>
+                    Renseignez les informations générales,
+                    pédagogiques et administratives de la matière.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- =================================================
+                 INFORMATIONS GENERALES
+            ================================================== -->
+
+            <div class="form-section">
+
+                <div class="section-heading">
+
+                    <div class="section-heading-icon">
+
+                        <i class="bi bi-book-fill"></i>
+
+                    </div>
+
+                    <h5>
+                        Informations générales
+                    </h5>
+
+                    <small>
+                        Identification
+                    </small>
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <!-- CODE -->
+
+                    <div class="col-md-6">
+
+                        <div class="form-field">
+
+                            <label class="form-label-modern">
+
+                                Code matière
+
+                                <span class="required">*</span>
+
+                            </label>
+
+                            <div class="input-modern">
+
+                                <i class="bi bi-hash input-icon"></i>
+
+                                {{ form.code }}
+
+                            </div>
+
+                            {% if form.code.errors %}
+
+                                <div class="field-errors">
+
+                                    {{ form.code.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LIBELLE -->
+
+                    <div class="col-md-6">
+
+                        <div class="form-field">
+
+                            <label class="form-label-modern">
+
+                                Libellé de la matière
+
+                                <span class="required">*</span>
+
+                            </label>
+
+                            <div class="input-modern">
+
+                                <i class="bi bi-book input-icon"></i>
+
+                                {{ form.libelle }}
+
+                            </div>
+
+                            {% if form.libelle.errors %}
+
+                                <div class="field-errors">
+
+                                    {{ form.libelle.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 INFORMATIONS PEDAGOGIQUES
+            ================================================== -->
+
+            <div class="form-section">
+
+                <div class="section-heading">
+
+                    <div class="section-heading-icon">
+
+                        <i class="bi bi-bar-chart-fill"></i>
+
+                    </div>
+
+                    <h5>
+                        Informations pédagogiques
+                    </h5>
+
+                    <small>
+                        Coefficient & volume
+                    </small>
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <!-- COEFFICIENT -->
+
+                    <div class="col-md-6">
+
+                        <div class="form-field">
+
+                            <label class="form-label-modern">
+
+                                Coefficient
+
+                                <span class="required">*</span>
+
+                            </label>
+
+                            <div class="input-modern">
+
+                                <i class="bi bi-percent input-icon"></i>
+
+                                {{ form.coefficient }}
+
+                            </div>
+
+                            {% if form.coefficient.errors %}
+
+                                <div class="field-errors">
+
+                                    {{ form.coefficient.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                            <div class="help-text">
+
+                                <i class="bi bi-info-circle"></i>
+
+                                Coefficient utilisé pour le calcul des moyennes.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- VOLUME -->
+
+                    <div class="col-md-6">
+
+                        <div class="form-field">
+
+                            <label class="form-label-modern">
+
+                                Volume horaire
+
+                                <span class="required">*</span>
+
+                            </label>
+
+                            <div class="input-modern">
+
+                                <i class="bi bi-clock-fill input-icon"></i>
+
+                                {{ form.volume_horaire }}
+
+                            </div>
+
+                            {% if form.volume_horaire.errors %}
+
+                                <div class="field-errors">
+
+                                    {{ form.volume_horaire.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                            <div class="help-text">
+
+                                <i class="bi bi-info-circle"></i>
+
+                                Nombre d'heures prévues pour cette matière.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ORGANISATION ACADEMIQUE
+            ================================================== -->
+
+            <div class="form-section">
+
+                <div class="section-heading">
+
+                    <div class="section-heading-icon">
+
+                        <i class="bi bi-diagram-3-fill"></i>
+
+                    </div>
+
+                    <h5>
+                        Organisation académique
+                    </h5>
+
+                    <small>
+                        Filière & unité
+                    </small>
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <!-- FILIERE -->
+
+                    <div class="col-md-6">
+
+                        <div class="form-field">
+
+                            <label class="form-label-modern">
+
+                                Filière BTS
+
+                                <span class="required">*</span>
+
+                            </label>
+
+                            <div class="input-modern">
+
+                                <i class="bi bi-mortarboard-fill input-icon"></i>
+
+                                {{ form.filiere_bts }}
+
+                            </div>
+
+                            {% if form.filiere_bts.errors %}
+
+                                <div class="field-errors">
+
+                                    {{ form.filiere_bts.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GRANDE UNITE -->
+
+                    <div class="col-md-6">
+
+                        <div class="form-field">
+
+                            <label class="form-label-modern">
+
+                                Grande unité
+
+                            </label>
+
+                            <div class="input-modern">
+
+                                <i class="bi bi-collection-fill input-icon"></i>
+
+                                {{ form.grande_unite }}
+
+                            </div>
+
+                            {% if form.grande_unite.errors %}
+
+                                <div class="field-errors">
+
+                                    {{ form.grande_unite.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                            <div class="help-text">
+
+                                <i class="bi bi-info-circle"></i>
+
+                                Sélectionnez l'enseignement auquel appartient cette matière.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ENSEIGNANT
+            ================================================== -->
+
+            <div class="form-section">
+
+                <div class="section-heading">
+
+                    <div class="section-heading-icon">
+
+                        <i class="bi bi-person-workspace"></i>
+
+                    </div>
+
+                    <h5>
+                        Enseignant responsable
+                    </h5>
+
+                    <small>
+                        Affectation
+                    </small>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label-modern">
+
+                        Professeur attribué
+
+                    </label>
+
+                    <div class="input-modern">
+
+                        <i class="bi bi-person-badge-fill input-icon"></i>
+
+                        {{ form.professeur }}
+
+                    </div>
+
+                    {% if form.professeur.errors %}
+
+                        <div class="field-errors">
+
+                            {{ form.professeur.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                    <div class="help-text">
+
+                        <i class="bi bi-info-circle"></i>
+
+                        Saisissez ou sélectionnez le professeur responsable de cette matière.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+            <div class="form-actions">
+
+                <div class="row g-3">
+
+
+                    <!-- ENREGISTRER -->
+
+                    <div class="col-md-7">
+
+                        <button
+                            type="submit"
+                            class="btn btn-save btn-modern w-100"
+                        >
+
+                            <i class="bi bi-check-circle-fill me-2"></i>
+
+                            Enregistrer la matière
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- RETOUR -->
+
+                    <div class="col-md-5">
+
+                        <a
+                            href="{% url 'matiere_list' %}"
+                            class="btn btn-cancel btn-modern w-100 d-flex align-items-center justify-content-center"
+                        >
+
+                            <i class="bi bi-arrow-left me-2"></i>
+
+                            Retour à la liste
+
+                        </a>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
 </div>
 
 
-<!-- ================================================= -->
-<!-- STYLE -->
-<!-- ================================================= -->
-
-<style>
-
-    /* ================================================= */
-    /* CHAMPS */
-    /* ================================================= */
-
-    .input-modern input,
-    .input-modern select,
-    .input-modern textarea {
-
-        width: 100%;
-
-        padding: 12px 14px;
-
-        border-radius: 10px;
-
-        border: 1px solid #ddd;
-
-        transition: all 0.2s ease-in-out;
-
-        background: #fff;
-
-        font-size: 0.95rem;
-
-    }
-
-
-    /* ================================================= */
-    /* FOCUS */
-    /* ================================================= */
-
-    .input-modern input:focus,
-    .input-modern select:focus,
-    .input-modern textarea:focus {
-
-        border-color: #0d6efd;
-
-        box-shadow:
-            0 0 0 3px
-            rgba(13, 110, 253, 0.15);
-
-        outline: none;
-
-    }
-
-
-    /* ================================================= */
-    /* SELECT */
-    /* ================================================= */
-
-    .input-modern select {
-
-        cursor: pointer;
-
-    }
-
-
-    /* ================================================= */
-    /* LABEL */
-    /* ================================================= */
-
-    .form-label {
-
-        margin-bottom: 8px;
-
-    }
-
-
-    /* ================================================= */
-    /* ERREURS */
-    /* ================================================= */
-
-    .text-danger ul {
-
-        margin-bottom: 0;
-
-        padding-left: 20px;
-
-    }
-
-
-    /* ================================================= */
-    /* RESPONSIVE */
-    /* ================================================= */
-
-    @media (max-width: 576px) {
-
-        .card-body {
-
-            padding: 1.5rem !important;
-
-        }
-
-    }
-
-</style>
+</div>
 
 {% endblock %}

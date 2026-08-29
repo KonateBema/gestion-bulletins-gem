@@ -1,92 +1,1177 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Gestion des salles
+{% endblock %}
+
 {% block content %}
 
-<div class="container py-4">
+<style>
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+/* =========================================================
+   GLOBAL
+========================================================= */
 
-        <h3>🏢 Salles</h3>
+.salles-page {
+    padding: 25px 0 50px;
+}
 
-        <a href="{% url 'salle_add' %}" class="btn btn-primary">
-            ➕ Ajouter une salle
+.salles-page * {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.salles-header {
+
+    position: relative;
+    overflow: hidden;
+
+    padding: 30px;
+
+    border-radius: 24px;
+
+    margin-bottom: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd 0%,
+            #6610f2 100%
+        );
+
+    color: white;
+
+    box-shadow:
+        0 15px 40px rgba(13, 110, 253, .18);
+}
+
+.salles-header::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.08);
+
+    right: -100px;
+    top: -150px;
+}
+
+.salles-header::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.06);
+
+    left: 40%;
+    bottom: -130px;
+}
+
+.salles-header-content {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+.salles-icon {
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    background: rgba(255,255,255,.15);
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    font-size: 25px;
+
+    margin-bottom: 15px;
+}
+
+.salles-header h2 {
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    margin-bottom: 7px;
+}
+
+.salles-header p {
+
+    margin: 0;
+
+    color: rgba(255,255,255,.85);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   BUTTON AJOUT
+========================================================= */
+
+.btn-add-salle {
+
+    background: white;
+
+    color: #0d6efd;
+
+    border: none;
+
+    border-radius: 13px;
+
+    padding: 12px 20px;
+
+    font-weight: 700;
+
+    transition: all .25s ease;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.12);
+}
+
+.btn-add-salle:hover {
+
+    color: #0d6efd;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.18);
+}
+
+
+/* =========================================================
+   STATISTIQUES
+========================================================= */
+
+.stat-card {
+
+    height: 100%;
+
+    padding: 20px;
+
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.06);
+
+    transition: all .25s ease;
+}
+
+.stat-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 35px rgba(15,23,42,.10);
+}
+
+.stat-icon {
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 21px;
+
+    margin-bottom: 12px;
+}
+
+.stat-label {
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.stat-value {
+
+    color: #0f172a;
+
+    font-size: 27px;
+
+    font-weight: 800;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   FILTRE
+========================================================= */
+
+.filter-card {
+
+    margin: 25px 0;
+
+    padding: 22px;
+
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.05);
+}
+
+.filter-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #1e293b;
+
+    font-weight: 800;
+
+    margin-bottom: 17px;
+}
+
+.filter-icon {
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.modern-input {
+
+    min-height: 45px;
+
+    border-radius: 12px;
+
+    border: 1px solid #e2e8f0;
+
+    background: #f8fafc;
+
+    padding: 10px 14px;
+
+    font-size: 14px;
+
+    transition: all .2s ease;
+}
+
+.modern-input:focus {
+
+    background: white;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.08);
+}
+
+.btn-search {
+
+    min-height: 45px;
+
+    border-radius: 12px;
+
+    font-weight: 700;
+
+    padding: 10px 20px;
+}
+
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+
+.salles-card {
+
+    background: white;
+
+    border: 1px solid #eef1f5;
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06);
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.salles-card-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid #eef1f5;
+}
+
+.table-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.table-title-icon {
+
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 19px;
+}
+
+.table-title h5 {
+
+    margin: 0;
+
+    color: #0f172a;
+
+    font-weight: 800;
+}
+
+.table-title small {
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.modern-table {
+
+    margin: 0;
+}
+
+.modern-table thead th {
+
+    padding: 15px 18px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    white-space: nowrap;
+}
+
+.modern-table tbody td {
+
+    padding: 17px 18px;
+
+    color: #334155;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    font-size: 14px;
+
+    vertical-align: middle;
+}
+
+.modern-table tbody tr {
+
+    transition: all .2s ease;
+}
+
+.modern-table tbody tr:hover {
+
+    background: #f8fbff;
+}
+
+.modern-table tbody tr:last-child td {
+
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   CODE
+========================================================= */
+
+.room-code {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 9px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   NOM SALLE
+========================================================= */
+
+.room-name {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.room-icon {
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #f1f5f9;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   CAPACITE
+========================================================= */
+
+.capacity-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    border-radius: 9px;
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.action-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 7px;
+}
+
+.action-btn {
+
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    border: 1px solid;
+
+    transition: all .2s ease;
+}
+
+.action-edit {
+
+    color: #d97706;
+
+    background: #fffbeb;
+
+    border-color: #fde68a;
+}
+
+.action-edit:hover {
+
+    color: white;
+
+    background: #f59e0b;
+
+    border-color: #f59e0b;
+
+    transform: translateY(-2px);
+}
+
+.action-delete {
+
+    color: #dc2626;
+
+    background: #fef2f2;
+
+    border-color: #fecaca;
+}
+
+.action-delete:hover {
+
+    color: white;
+
+    background: #dc2626;
+
+    border-color: #dc2626;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+
+    padding: 60px 20px !important;
+
+    text-align: center;
+}
+
+.empty-icon {
+
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: auto auto 15px;
+
+    border-radius: 20px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 30px;
+}
+
+.empty-state h5 {
+
+    color: #334155;
+
+    font-weight: 800;
+}
+
+.empty-state p {
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .salles-header {
+
+        padding: 22px;
+
+        border-radius: 20px;
+    }
+
+    .salles-header h2 {
+
+        font-size: 23px;
+    }
+
+    .salles-header .d-flex {
+
+        align-items: flex-start !important;
+    }
+
+    .btn-add-salle {
+
+        padding: 10px 13px;
+
+        font-size: 13px;
+    }
+
+    .salles-card-header {
+
+        padding: 17px;
+    }
+
+    .modern-table thead th,
+    .modern-table tbody td {
+
+        padding: 13px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .salles-header .d-flex {
+
+        flex-direction: column;
+
+        gap: 18px;
+    }
+
+    .btn-add-salle {
+
+        width: 100%;
+    }
+
+    .filter-card {
+
+        padding: 17px;
+    }
+
+    .table-title h5 {
+
+        font-size: 15px;
+    }
+
+}
+
+</style>
+
+<div class="container-fluid salles-page">
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<div class="salles-header">
+
+<div class="salles-header-content">
+
+    <div class="d-flex justify-content-between align-items-center gap-3">
+
+        <div>
+
+            <div class="salles-icon">
+
+                <i class="bi bi-door-open-fill"></i>
+
+            </div>
+
+            <h2>
+                Gestion des salles
+            </h2>
+
+            <p>
+                Gérez les salles, leurs capacités et leur disponibilité.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'salle_add' %}"
+            class="btn btn-add-salle"
+        >
+
+            <i class="bi bi-plus-circle-fill me-1"></i>
+
+            Nouvelle salle
+
         </a>
 
     </div>
 
-    <!-- TABLE -->
-    <div class="card shadow-sm">
+</div>
 
-        <div class="card-body p-0">
 
-            <table class="table table-hover mb-0">
+</div>
 
-                <thead class="table-dark">
-                    <tr>
-                        <th>Code</th>
-                        <th>Nom</th>
-                        <th>Capacité</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
+<!-- =====================================================
+     STATISTIQUES
+====================================================== -->
 
-                <tbody>
+<div class="row g-3">
 
-                    {% for salle in salles %}
+<!-- TOTAL SALLES -->
 
-                    <tr>
+<div class="col-xl-4 col-md-6">
 
-                        <td>
-                            <span class="badge bg-info">
-                                {{ salle.code }}
-                            </span>
-                        </td>
+    <div class="stat-card">
 
-                        <td>
-                            {{ salle.nom }}
-                        </td>
+        <div class="stat-icon bg-primary-subtle text-primary">
 
-                        <td>
-                            <span class="badge bg-secondary">
-                                {{ salle.capacite }} places
-                            </span>
-                        </td>
+            <i class="bi bi-building-fill"></i>
 
-                        <td class="text-center">
+        </div>
 
-                            <a href="{% url 'salle_edit' salle.id %}"
-                               class="btn btn-warning btn-sm">
-                                ✏️
-                            </a>
+        <div class="stat-label">
+            Salles enregistrées
+        </div>
 
-                            <a href="{% url 'salle_delete' salle.id %}"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Supprimer cette salle ?')">
-                                🗑️
-                            </a>
+        <div class="stat-value">
 
-                        </td>
-
-                    </tr>
-
-                    {% empty %}
-
-                    <tr>
-                        <td colspan="4" class="text-center p-4">
-                            Aucune salle enregistrée
-                        </td>
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
+            {{ salles|length }}
 
         </div>
 
     </div>
+
+</div>
+
+
+<!-- CAPACITE -->
+
+<div class="col-xl-4 col-md-6">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-success-subtle text-success">
+
+            <i class="bi bi-people-fill"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Capacité totale
+        </div>
+
+        <div class="stat-value">
+
+            {% widthratio salles|length 1 1 %}
+
+            <span class="fs-6 text-muted fw-normal">
+                salles
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- INFORMATION -->
+
+<div class="col-xl-4 col-md-12">
+
+    <div class="stat-card">
+
+        <div class="stat-icon bg-warning-subtle text-warning">
+
+            <i class="bi bi-info-circle-fill"></i>
+
+        </div>
+
+        <div class="stat-label">
+            Gestion
+        </div>
+
+        <div class="stat-value">
+
+            Active
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+<!-- =====================================================
+     FILTRE
+====================================================== -->
+
+<div class="filter-card">
+
+<div class="filter-title">
+
+    <div class="filter-icon">
+
+        <i class="bi bi-search"></i>
+
+    </div>
+
+    Rechercher une salle
+
+</div>
+
+
+<form method="GET">
+
+    <div class="row g-3 align-items-end">
+
+
+        <div class="col-md-9">
+
+            <label class="form-label fw-semibold small text-muted">
+
+                Recherche
+
+            </label>
+
+            <input
+                type="text"
+                name="q"
+                class="form-control modern-input"
+                placeholder="Rechercher par code ou nom de salle..."
+                value="{{ request.GET.q }}"
+            >
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-search w-100"
+            >
+
+                <i class="bi bi-search me-1"></i>
+
+                Rechercher
+
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+</div>
+
+<!-- =====================================================
+     TABLE
+====================================================== -->
+
+<div class="salles-card">
+
+
+<!-- HEADER TABLE -->
+
+<div class="salles-card-header">
+
+    <div class="table-title">
+
+        <div class="table-title-icon">
+
+            <i class="bi bi-list-ul"></i>
+
+        </div>
+
+        <div>
+
+            <h5>
+                Liste des salles
+            </h5>
+
+            <small>
+                Salles disponibles dans l'établissement
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2">
+
+        {{ salles|length }}
+        salle{{ salles|length|pluralize }}
+
+    </span>
+
+</div>
+
+
+<!-- TABLE -->
+
+<div class="table-responsive">
+
+    <table class="table modern-table align-middle">
+
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Code
+                </th>
+
+                <th>
+                    Salle
+                </th>
+
+                <th>
+                    Capacité
+                </th>
+
+                <th class="text-center">
+                    Actions
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+        {% for salle in salles %}
+
+            <tr>
+
+
+                <!-- CODE -->
+
+                <td>
+
+                    <span class="room-code">
+
+                        <i class="bi bi-hash"></i>
+
+                        {{ salle.code }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- NOM -->
+
+                <td>
+
+                    <div class="room-name">
+
+                        <div class="room-icon">
+
+                            <i class="bi bi-door-open-fill"></i>
+
+                        </div>
+
+                        <span>
+
+                            {{ salle.nom }}
+
+                        </span>
+
+                    </div>
+
+                </td>
+
+
+                <!-- CAPACITE -->
+
+                <td>
+
+                    <span class="capacity-badge">
+
+                        <i class="bi bi-people-fill"></i>
+
+                        {{ salle.capacite }}
+
+                        place{{ salle.capacite|pluralize }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- ACTIONS -->
+
+                <td>
+
+                    <div class="action-buttons">
+
+
+                        <a
+                            href="{% url 'salle_edit' salle.id %}"
+                            class="action-btn action-edit"
+                            title="Modifier la salle"
+                        >
+
+                            <i class="bi bi-pencil-fill"></i>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'salle_delete' salle.id %}"
+                            class="action-btn action-delete"
+                            title="Supprimer la salle"
+                            onclick="return confirm('Voulez-vous vraiment supprimer cette salle ?');"
+                        >
+
+                            <i class="bi bi-trash3-fill"></i>
+
+                        </a>
+
+
+                    </div>
+
+                </td>
+
+
+            </tr>
+
+
+        {% empty %}
+
+
+            <tr>
+
+                <td colspan="4" class="empty-state">
+
+                    <div class="empty-icon">
+
+                        <i class="bi bi-building-x"></i>
+
+                    </div>
+
+                    <h5>
+                        Aucune salle enregistrée
+                    </h5>
+
+                    <p>
+                        Commencez par créer une nouvelle salle.
+                    </p>
+
+                    <a
+                        href="{% url 'salle_add' %}"
+                        class="btn btn-primary rounded-pill px-4"
+                    >
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Ajouter une salle
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+
+        {% endfor %}
+
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+</div>
 
 </div>
 

@@ -40,7 +40,7 @@ DEBUG = True
 #      "localhost,127.0.0.1,gestion-bulletins-gem-1.onrender.com"
 # ).split(",")
 ALLOWED_HOSTS = [
-    "gestion-bulletins-gem-1.onrender.com",
+    "gestion-bulletins-gem.onrender.com",
     "localhost",
     "127.0.0.1",
 ]
